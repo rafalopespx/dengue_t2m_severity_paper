@@ -1,28 +1,26 @@
 
-effects_on_dlnm<-function(percentil_min, percentil_max, predcen.gnm){
+effects_on_dlnm<-function(predcen.gnm){
   #Getting the effects of hot and cold
   # percentil_min<-50
   # percentil_max<-95
   
-  percentil_df<-lapply(percentil_values, function(x){
-    y<-data.frame(RR=predcen.gnm$matRRfit[percentil_values,], )
-  })
+  RR<-as.data.frame(predcen.gnm$matRRfit)
+  RR$idE<-seq(1,99,1)
+  RR_low<-as.data.frame(predcen.gnm$matRRlow)
+  RR_low$idE<-seq(1,99,1)
+  RR_high<-as.data.frame(predcen.gnm$matRRhigh)
+  RR_high$idE<-seq(1,99,1)
   
-  percentil_min_df.gnm<-data.frame(RR=predcen.gnm$matRRfit[percentil_min,],
-                                   LowRR=predcen.gnm$matRRlow[percentil_min,],
-                                   HighRR=predcen.gnm$matRRhigh[percentil_min,],idE="50th")
-  percentil_max_df.gnm<-data.frame(RR=predcen.gnm$matRRfit[percentil_max,],
-                                   LowRR=predcen.gnm$matRRlow[percentil_max,],
-                                   HighRR=predcen.gnm$matRRhigh[percentil_max,],idE="95th")
+  f1<- function(x) { as.numeric(str_sub(x, length(x))) }
   
-  f1<- function(x) { as.numeric(str_sub(x, 4)) }
+  RR_df<-rownames_to_column(RR, "lag") %>% 
+    mutate_at(1, f1)
+  RR_low_df<-rownames_to_column(RR_low, "lag") %>% 
+    mutate_at(1, f1)
+  RR_high_df<-rownames_to_column(RR_high, "lag") %>% 
+    mutate_at(1, f1)
   
-  percentil_min_df.gnm<-rownames_to_column(percentil_min_df.gnm, "lag")%>% 
-    mutate_at(1, f1) 
-  percentil_max_df.gnm<-rownames_to_column(percentil_max_df.gnm, "lag")%>% 
-    mutate_at(1, f1)  
-  
-  RRVal_lag.gnm<-bind_rows(percentil_min_df.gnm,percentil_max_df.gnm)%>%
+  RRVal_lag.gnm<-bind_rows(RR_df, RR_low_df, RR_high_df)%>%
     mutate_at(5,"factor")
   
   RRVal_lag <- 
