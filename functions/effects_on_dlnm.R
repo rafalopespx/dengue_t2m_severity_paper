@@ -11,17 +11,22 @@ effects_on_dlnm<-function(predcen.gnm){
   RR_high<-as.data.frame(predcen.gnm$matRRhigh)
   RR_high$idE<-seq(1,99,1)
   
-  f1<- function(x) { as.numeric(str_sub(x, length(x))) }
+  RR_df<-rownames_to_column(RR, "temp_mean")%>% 
+    mutate(temp_mean = round(as.numeric(temp_mean), 2)) %>% 
+    pivot_longer(cols = -c("temp_mean", "idE"), names_to = "lag", values_to = "RR") %>% 
+    mutate(lag = as.numeric(gsub(lag, pattern = "lag", replacement = "")))
+  RR_low_df<-rownames_to_column(RR_low, "temp_mean")%>% 
+    mutate(temp_mean = round(as.numeric(temp_mean), 2)) %>% 
+    pivot_longer(cols = -c("temp_mean", "idE"), names_to = "lag", values_to = "LowRR") %>% 
+    mutate(lag = as.numeric(gsub(lag, pattern = "lag", replacement = "")))
+  RR_high_df<-rownames_to_column(RR_high, "temp_mean")%>% 
+    mutate(temp_mean = round(as.numeric(temp_mean), 2)) %>% 
+    pivot_longer(cols = -c("temp_mean", "idE"), names_to = "lag", values_to = "HighRR") %>% 
+    mutate(lag = as.numeric(gsub(lag, pattern = "lag", replacement = "")))
   
-  RR_df<-rownames_to_column(RR, "lag") %>% 
-    mutate_at(1, f1)
-  RR_low_df<-rownames_to_column(RR_low, "lag") %>% 
-    mutate_at(1, f1)
-  RR_high_df<-rownames_to_column(RR_high, "lag") %>% 
-    mutate_at(1, f1)
-  
-  RRVal_lag.gnm<-bind_rows(RR_df, RR_low_df, RR_high_df)%>%
-    mutate_at(5,"factor")
+  RRVal_lag.gnm<-RR_df %>% 
+    left_join(RR_low_df, by = c("temp_mean", "idE", "lag")) %>% 
+    left_join(RR_high_df, by = c("temp_mean", "idE", "lag"))
   
   RRVal_lag <- 
     bind_rows(

@@ -46,7 +46,15 @@ names_stacked<-c("RO","AC","AM","RR","PA","AP","TO", ## Abbreviation for the sta
 
 ## Cros-basis parametrization
 # Defining basis and grid
-knotsper<-equalknots(dengue_t2m$temp_mean, nk = 2)
+dengue_t2m_means<-dengue_t2m %>% 
+  group_by(abbrev_state) %>% 
+  summarise(tmin = min(temp_mean), 
+            tmax = max(temp_mean)) %>%
+  ungroup() %>% 
+  summarise(tmin = mean(tmin), 
+            tmax = mean(tmax))
+knotsper<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 2)
+# knotsper<-equalknots(dengue_t2m$temp_mean, nk = 2)
 varfun<-"ns"
 
 nlag<-21

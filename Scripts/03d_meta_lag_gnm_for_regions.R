@@ -5,23 +5,18 @@ gc()
 source("Scripts/01_parametrizations.R")
 
 ## Percentile Coef and Vcov loading
-percentile_vector<-c(0.05, 0.50, 0.95)
+percentile_vector<-c(0.50, 0.95)
 
-# Reading the coefficients matrix for the j-th percentile
-coef_names<-list.files(path = "Outputs/Tables/", 
-                       pattern = "coeffcients_gnm_meta_for_all_percentile_", full.names = T)
-coef_list<-lapply(coef_names, function(x){
-  x<-vroom(x)
-}) %>% 
-  bind_rows()
+## Loading Coef and Vcov, in case to not re-run the model all again
+## Coef and Vcov for states
+coef_q50<-vroom("Outputs/Tables/coefficients_gnm_q50_for_all.csv.xz")
+vcov_q50<-vroom("Outputs/Tables/vcov_gnm_q50_for_all.csv.xz")
+## Coef and Vcov for states
+coef_q95<-vroom("Outputs/Tables/coefficients_gnm_q95_for_all.csv.xz")
+vcov_q95<-vroom("Outputs/Tables/vcov_gnm_q95_for_all.csv.xz")
 
-# Reading the Covariance Matrix for the j-th percentile
-vcov_names<-list.files(path = "Outputs/Tables/", 
-                       pattern = "vcov_gnm_meta_for_all_percentile_", full.names = T)
-vcov_list<-lapply(vcov_names, function(x){
-  x<-vroom(x)
-})%>% 
-  bind_rows()
+coef_list<-list(coef_q50, coef_q95)
+vcov_list<-list(vcov_q50, vcov_q95)
 
 # Meta by Region Variables
 source("functions/functions.R")
@@ -37,12 +32,11 @@ RR_list<-vector("list", length(percentile_vector))
 
 # Lopping over each percentile j-th
 for (j in 1:length(percentile_vector)) {
+  
   # Coefficients for each percentile
-  coef<-coef_list %>% 
-    filter(percentile == percentile_vector[j])
+  coef<-coef_list[[j]]
   # Covariance matrix for each percentile
-  vcov<-vcov_list %>% 
-    filter(percentile == percentile_vector[j])
+  vcov<-vcov_list[[j]]
   
   # Looping over all the Regions on the j-th percentile
   for (i in 1:length(regions_names)) {
@@ -50,14 +44,15 @@ for (j in 1:length(percentile_vector)) {
     region_filter<-regions %>% 
       filter(region == regions_names[i])
     
-    data_region<-dengue_t2m %>% 
-      filter(abbrev_state %in% region_filter$abbrev_state)
+    # data_region<-dengue_t2m %>% 
+    #   filter(abbrev_state %in% region_filter$abbrev_state)
     
     # Filtering Coef Matrix and VCOV matrix to the states for the region
     # coef by Region
     coef_region<-coef %>% 
       filter(abbrev_state %in% region_filter$abbrev_state) %>% 
-      select(b1, b2, b3, b4, b5)
+      select(-abbrev_state) %>% 
+      setNames(c("b1", "b2", "b3", "b4", "b5"))
     coef_region<-as.matrix(coef_region)
     rownames(coef_region)<-region_filter$abbrev_state
     # vcov by Region
@@ -75,7 +70,7 @@ for (j in 1:length(percentile_vector)) {
     mv<- mvmeta(coef_region~1,vcov_region,method="reml",control=list(showiter=T))
     
     # Predicciton without centering, because we wanna see the effects by percentile centered
-    Metapred<-crosspred(basis=blag,coef=coef(mv),vcov=vcov(mv), model.link="log", cen = )
+    Metapred<-crosspred(basis=blag,coef=coef(mv),vcov=vcov(mv), model.link="log")
     plot(Metapred)
     
     # Storing data from the percentil centered lag effect
