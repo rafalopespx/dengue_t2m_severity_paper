@@ -14,6 +14,7 @@ vcov<-vroom("Outputs/Tables/vcov_gnm_for_all.csv.xz")
 ## Coef and Vcov for states, CENTERED
 coef_cen<-vroom("Outputs/Tables/coefficients_gnm_cen_for_all.csv.xz")
 vcov_cen<-vroom("Outputs/Tables/vcov_gnm_cen_for_all.csv.xz")
+vcov_cen$abbrev_state<-vcov$abbrev_state
 
 # Putting coef and vcov in the right format again
 # coef 

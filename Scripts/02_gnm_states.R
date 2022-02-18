@@ -65,10 +65,10 @@ for (i in 1:stacked_levels){
   ### Centered Cross-pred
   mht.gnm[i]<-pred.gnm$predvar[which.min(pred.gnm$allRRfit)] 
   
-  predcen.gnm<-crosspred(cb,model.gnm, at=tpred_state,cen=mmt.gnm)
+  predcen.gnm<-crosspred(cb,model.gnm, at=tpred_state,cen=mht.gnm[i])
   
   #Reduced Prediction: overall
-  red_cen <- crossreduce(cb,model.gnm, at=tpred_state, cen=mmt.gnm)
+  red_cen <- crossreduce(cb,model.gnm, at=tpred_state, cen=mht.gnm[i])
   coef_cen[i,] <- red_cen$coef
   vcov_cen[[i]] <- red_cen$vcov
   
@@ -77,6 +77,8 @@ for (i in 1:stacked_levels){
   
   RRVal_lag_list[[i]]<-RR_list$lag
   RR_overall_list[[i]]<-RR_list$overall
+  
+  gc()
   
 }
 
@@ -122,6 +124,7 @@ vcov_df<-lapply(vcov, function(x){
   bind_rows(.id = "abbrev_state")
 
 vroom_write(vcov_df, file = "Outputs/Tables/vcov_gnm_for_all.csv.xz")
+
 ## Centered
 vcov_df_cen<-lapply(vcov_cen, function(x){
   x<-x %>% 
