@@ -1,4 +1,5 @@
 rm(list=ls())
+gc()
 
 ### Loading packages
 if(!require(dplyr)){install.packages("dplyr"); library(dplyr)}
@@ -11,7 +12,7 @@ if(!require(gtsummary)){install.packages("gtsummary"); library(gtsummary)}
 if(!require(ggforce)){install.packages("ggforce"); library(ggforce)}
 
 
-source("Functions/functions.R")
+source("functions/functions.R")
 
 # Already run and saved. Read with code below
 #  
@@ -79,9 +80,9 @@ quantiles_temp <- vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
 # RR_list_lag<-vroom("Outputs/Tables/meta_RR_gnm_lags_for_all.csv.xz")
 ## Absolute
 ## Overall Meta 
-res_state_absolute<-vroom("Outputs/Tables/meta_gnm_overall_absolute_scale_for_all.csv.xz")
+res_state_absolute<-vroom("Outputs/Tables/meta_gnm_overall_for_all.csv.xz")
 ## RR Meta
-RR_list_absolute<-vroom("Outputs/Tables/meta_gnm_RR_overall_absolute_scale_for_all.csv.xz")
+RR_list_absolute<-vroom("Outputs/Tables/meta_gnm_RR_overall_for_all.csv.xz")
 ## RR over lag Meta
 RR_list_lag<-vroom("Outputs/Tables/meta_RR_gnm_lags_for_all.csv.xz")
 
@@ -125,9 +126,9 @@ regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 # RR_list_region_relative<-vroom("Outputs/Tables/meta_gnm_RR_relative_scale_all_regions.csv.xz")
 ## Absolute
 ### Overall
-res_region_absolute<-vroom("Outputs/Tables/meta_gnm_overall_absolute_scale_all_regions.csv.xz")
+res_region_absolute<-vroom("Outputs/Tables/meta_gnm_overall_all_regions.csv.xz")
 ### RR
-RR_list_region_absolute<-vroom("Outputs/Tables/meta_gnm_RR_absolute_scale_all_regions.csv.xz")
+# RR_list_region_absolute<-vroom("Outputs/Tables/meta_gnm_RR_")
 
 ### Coef list by percentile lags
 # coef_list<-vroom("Outputs/Tables/coeffcients_gnm_meta_for_regions_percentile.csv.xz")
