@@ -102,6 +102,28 @@ plot_p50<-RR_list_lag %>%
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), axis.title.x = element_blank())
 plot_p50
 
+# plot_p50_zoom<-RR_list_lag %>%
+#   filter(percentil == 0.50 & lag %in% seq(1,14,1)) %>% 
+#   ggplot(aes(x=lag, y=RR, ymin = LowRR, ymax = HighRR)) + 
+#   geom_hline(yintercept = 1, size = 0.5) +
+#   geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR),
+#                  size = .8, show.legend = FALSE, colour="#d73027") +
+#   geom_point(shape = 21, fill = "white", size = 2,show.legend = FALSE) +
+#   scale_x_continuous(breaks = seq(1, 14, 2)) +
+#   scale_y_continuous(breaks = seq(0, 1.5, 0.1)) +
+#   labs(x = "Days", 
+#        y = "Dengue Hosp. RR ",
+#        # title= paste0("Effect on P0.05"),
+#        # subtitle="Lag Effects on 50th Temperature Percentile"
+#   )+
+#   theme_classic()
+# plot_p50_zoom
+# 
+# plot_p50_inset<-plot_p50+
+#     inset_element(plot_p50_zoom, 0.6, 0.6, 1, 1, align_to = "full")+
+#     plot_annotation(tag_levels = "1")
+# plot_p50_inset
+
 ## Plot effects over P0.95
 ylab<-RR_list_lag %>% 
   filter(percentil == 0.95)
@@ -123,6 +145,28 @@ plot_p95<-RR_list_lag %>%
   theme_bw()+
   theme_minimal()
 plot_p95
+
+# plot_p95_zoom<-RR_list_lag %>%
+#   filter(percentil == 0.95 & lag %in% seq(1,14,1)) %>% 
+#   ggplot(aes(x=lag, y=RR, ymin = LowRR, ymax = HighRR)) + 
+#   geom_hline(yintercept = 1, size = 0.5) +
+#   geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR),
+#                  size = .8, show.legend = FALSE, colour="#d73027") +
+#   geom_point(shape = 21, fill = "white", size = 2,show.legend = FALSE) +
+#   scale_x_continuous(breaks = seq(1, 14, 2)) +
+#   scale_y_continuous(breaks = seq(0, 1.5, 0.1)) +
+#   labs(x = "Days", 
+#        y = "Dengue Hosp. RR ",
+#        # title= paste0("Effect on P0.05"),
+#        # subtitle="Lag Effects on 50th Temperature Percentile"
+#   )+
+#   theme_minimal()
+# plot_p95_zoom
+
+# plot_p95_inset<-plot_p95+
+#   inset_element(plot_p95_zoom, 0.6, 0.6, 1, 1, align_to = "full")+
+#   plot_annotation(tag_levels = "1")
+# plot_p95_inset
 
 ## Plot all together
 plot_percent<-gridExtra::grid.arrange(plot_p50, plot_p95)
