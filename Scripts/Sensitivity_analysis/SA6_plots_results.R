@@ -42,7 +42,7 @@ for (i in 1:stacked_levels) {
   RR_95_05_overall[[i]]<-RR_overall %>% 
     filter(temp_mean >= quantile_state$q05) %>% 
     filter(temp_mean <= quantile_state$q95)
-    
+  
   # Plot RR Lag
   ## 
   ylab<-pretty(c(RR_lag$LowRR,RR_lag$HighRR))
@@ -84,7 +84,7 @@ for (i in 1:stacked_levels) {
     labs(x = "Mean Temperature [ºC]", y = "Dengue Hosp. RR", title = names_stacked_plot[i])
   
   plot_list[[i]]<-list(rr_lag = plot_rr_lag, 
-                                rr_overall = plot_rr_overall)
+                       rr_overall = plot_rr_overall)
   
   # Patchwork Plot to be saved
   plot_final[[i]]<-(plot_rr_lag | plot_rr_overall)+
