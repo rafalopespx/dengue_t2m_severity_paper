@@ -44,8 +44,13 @@ for (j in 1:length(percentile_vector)) {
     region_filter<-regions %>% 
       filter(region == regions_names[i])
     
-    # data_region<-dengue_t2m %>% 
-    #   filter(abbrev_state %in% region_filter$abbrev_state)
+    data_region<-dengue_t2m %>%
+      filter(abbrev_state %in% region_filter$abbrev_state)
+    
+    tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
+    
+    cb_region<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar, arglag = arglag)
+    blag_region <- do.call("onebasis",c(list(x=xlag),attr(cb_region,"arglag")))
     
     # Filtering Coef Matrix and VCOV matrix to the states for the region
     # coef by Region
@@ -70,7 +75,7 @@ for (j in 1:length(percentile_vector)) {
     mv<- mvmeta(coef_region~1,vcov_region,method="reml",control=list(showiter=T))
     
     # Predicciton without centering, because we wanna see the effects by percentile centered
-    Metapred<-crosspred(basis=blag,coef=coef(mv),vcov=vcov(mv), model.link="log")
+    Metapred<-crosspred(basis=blag_region,coef=coef(mv),vcov=vcov(mv), model.link="log")
     plot(Metapred)
     
     # Storing data from the percentil centered lag effect

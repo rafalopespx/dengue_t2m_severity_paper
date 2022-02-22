@@ -38,7 +38,7 @@ codes_stacked<-c(11,12,13,14,15,16,17, ## Code number for the states in the Nort
                  31,32,33,35, ## Code number for the states in the Southeast Region
                  41,42,43, ## Code number for the states in the South Region
                  50,51,52,53) ## Code number for the states in the Center-West Region
-names_stacked<-c("RO","AC","AM","RR","PA","AP","TO", ## Abbreviation for the states in the North Region
+states<-names_stacked<-c("RO","AC","AM","RR","PA","AP","TO", ## Abbreviation for the states in the North Region
                  "MA","PI","CE","RN","PB","PE","AL","SE","BA", ## Abbreviation for the states in the Northeast Region
                  "MG","ES","RJ","SP", ## Abbreviation for the states in the Southeast Region
                  "PR","SC","RS", ## Abbreviation for the states in the South Region

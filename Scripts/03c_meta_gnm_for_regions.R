@@ -33,6 +33,9 @@ for (i in 1:5) {
 
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   
+  cb_region<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar, arglag = arglag)
+  bvar_region<-do.call("onebasis", c(list(x=tpred_region), attr(cb_region, "argvar")))
+  
   # Filtering Coef Matrix and VCOV matrix to the states for the region
   # coef
   coef_function<-function(x){
@@ -72,7 +75,7 @@ for (i in 1:5) {
   ## Predictions from the meta-analysis
   # 3.1. Prediction overall without centering
   ## 
-  Metapred_region<-crosspred(basis=bvar,
+  Metapred_region<-crosspred(basis=bvar_region,
                              coef=coef(mv_region),
                              vcov=vcov(mv_region),
                              at=tpred_region,
@@ -82,7 +85,7 @@ for (i in 1:5) {
   # 3.2 Prediction overall centering mht
   ## 
   (metaMHT_region[i]<-Metapred_region$predvar[which.min(Metapred_region$allfit)])  #MHT    
-  Metapred_region<-crosspred(basis=bvar,
+  Metapred_region<-crosspred(basis=bvar_region,
                              coef=coef(mv_region),
                              vcov=vcov(mv_region),
                              cen=metaMHT_region[i],
@@ -101,6 +104,8 @@ for (i in 1:5) {
   ### 
   vroom_write(res_region[[i]], 
               file = paste0("Outputs/Tables/meta_gnm_overall_region_", regions_names[i],".csv.xz"))
+  
+  gc()
 }
 
 # Binding by Regions
