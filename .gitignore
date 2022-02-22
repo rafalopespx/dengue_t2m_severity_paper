@@ -27,10 +27,13 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 # CSVs
+Data/*
 Data/t2m_muni_2010_2019.csv.xz
 Data/rh_muni_2010_2019.csv.xz
+Data/sih_aih_rd_dengue_2010_2020.csv.xz
 Outputs/Plots/plot_ready.csv
 Outputs/Tables/table_ready.csv
+Data/Tables/table_ready.csv
 Data/dengue_t2m_muni_2010_2019.csv.xz
 Data/dengue_rh2m_muni_2010_2019.csv.xz
 Data/dengue_t2m_stratas_2010_2019.csv.xz
