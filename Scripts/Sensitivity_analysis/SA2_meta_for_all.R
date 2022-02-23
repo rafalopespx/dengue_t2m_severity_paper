@@ -3,123 +3,123 @@ gc()
 
 ### Loading packages
 source("Scripts/01_parametrizations.R")
-
-## TIRAR CENTERED VCOV AND COEF
+source("Scripts/Sensitivity_analysis/sa1&2_parametrization.R")
 
 states<-names_stacked
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
-## Coef and Vcov for states
-coef<-vroom("Outputs/Tables/coefficients_gnm_for_all.csv.xz")
-vcov<-vroom("Outputs/Tables/vcov_gnm_for_all.csv.xz")
+## Coef and Vcov SA1
+coef_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_coefficients_gnm_for_all.csv.xz")
+vcov_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_vcov_gnm_for_all.csv.xz")
 
-## Coef and Vcov for states, CENTERED
-coef_cen<-vroom("Outputs/Tables/coefficients_gnm_cen_for_all.csv.xz")
-vcov_cen<-vroom("Outputs/Tables/vcov_gnm_cen_for_all.csv.xz")
+## Coef and Vcov SA2
+coef_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_coefficients_gnm_for_all.csv.xz")
+vcov_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_vcov_gnm_for_all.csv.xz")
 
 # Putting coef and vcov in the right format again
 # coef 
-coef<-coef %>% 
-  select(b1, b2, b3)
-coef<-as.matrix(coef)
-rownames(coef)<-states
-# coef cen
-coef_cen<-coef_cen %>% 
-  select(b1, b2, b3)
-coef_cen<-as.matrix(coef_cen)
-rownames(coef_cen)<-states
+coef_fun<-function(x){
+  x<-x %>% 
+    select(-abbrev_state)
+  x<-as.matrix(x)
+  rownames(x)<-states
+  return(x)
+}
+coef_sa1_mat<-coef_fun(coef_sa1)
+coef_sa2_mat<-coef_fun(coef_sa2)
+
 # vcov 
-vcov_list<-vector("list", length = length(states))
-vcov_cen_list<-vector("list", length = length(states))
+vcov_sa1_list<-vector("list", length = length(states))
+vcov_sa2_list<-vector("list", length = length(states))
 
 for (j in 1:length(states)) {
-  #  Vcov
-  vcov_list[[j]]<-vcov %>% 
+  # SA1 Vcov
+  vcov_sa1_list[[j]]<-vcov_sa1 %>% 
     filter(abbrev_state == states[j])%>% 
-    select(b1, b2, b3)
-  vcov_list[[j]]<-as.matrix(vcov_list[[j]])
-  rownames(vcov_list[[j]])<-c("b1", "b2", "b3")
-  # cen Vcov
-  vcov_cen_list[[j]]<-vcov_cen %>% 
+    select(-abbrev_state, -coef)
+  vcov_sa1_list[[j]]<-as.matrix(vcov_sa1_list[[j]])
+  rownames(vcov_sa1_list[[j]])<-c("b1", "b2", "b3", "b4")
+  # SA2 Vcov
+  vcov_sa2_list[[j]]<-vcov_sa2 %>% 
     filter(abbrev_state == states[j])%>% 
-    select(b1, b2, b3)
-  vcov_cen_list[[j]]<-as.matrix(vcov_cen_list[[j]])
-  rownames(vcov_cen_list[[j]])<-c("b1", "b2", "b3")
+    select(-abbrev_state, -coef)
+  vcov_sa2_list[[j]]<-as.matrix(vcov_sa2_list[[j]])
+  rownames(vcov_sa2_list[[j]])<-c("b1", "b2", "b3")
 }
 
 ## Meta-analysis
-## 
-mv<- mvmeta(coef~1,
-            vcov_list,
+## SA1
+mv_sa1<- mvmeta(coef_sa1_mat~1,
+            vcov_sa1_list,
             method="reml",
             control=list(showiter=T))
-summary(mv)
-## cen
-mv_cen<- mvmeta(coef_cen~1,
-                vcov_cen_list,
+summary(mv_sa1)
+## SA2
+mv_sa2<- mvmeta(coef_sa2_mat~1,
+                vcov_sa2_list,
                 method="reml",
                 control=list(showiter=T))
-summary(mv_cen)
+summary(mv_sa2)
 
 ## Predictions from the meta-analysis
 # 3.1. Prediction overall without centering
-##  non-cen
-Metapred<-crosspred(basis=bvar,
-                    coef=coef(mv),
-                    vcov=vcov(mv),
+## SA1
+Metapred_sa1<-crosspred(basis=bvar_sa1,
+                    coef=coef(mv_sa1),
+                    vcov=vcov(mv_sa1),
                     at=tpred,
                     model.link="log")  
-plot(Metapred)
-## cen 
-Metapred_cen<-crosspred(basis=bvar,
-                        coef=coef(mv_cen),
-                        vcov=vcov(mv_cen),
+plot(Metapred_sa1)
+## SA2
+Metapred_sa2<-crosspred(basis=bvar_sa2,
+                        coef=coef(mv_sa2),
+                        vcov=vcov(mv_sa2),
                         at=tpred,
                         model.link="log")  
-plot(Metapred_cen)
+plot(Metapred_sa2)
 
 # 3.2 Prediction overall centering mht
-##  non-cen
-(metaMHT<-Metapred$predvar[which.min(Metapred$allfit)])  
+##  SA1
+(metaMHT_sa1<-Metapred_sa1$predvar[which.min(Metapred_sa1$allfit)])  
 #MHT Remember this to be used on the next script, 03b_meta_lag_gnm_for_all.R
-Metapred<-crosspred(basis=bvar,
-                    coef=coef(mv),
-                    vcov=vcov(mv),
-                    cen=metaMHT,
+Metapred_sa1<-crosspred(basis=bvar_sa1,
+                    coef=coef(mv_sa1),
+                    vcov=vcov(mv_sa1),
+                    cen=metaMHT_sa1,
                     at=tpred,
                     model.link="log")  #centering
-plot(Metapred)
-## cen 
-(metaMHT_cen<-Metapred_cen$predvar[which.min(Metapred_cen$allfit)])  
+plot(Metapred_sa1)
+## SA2
+(metaMHT_sa2<-Metapred_sa2$predvar[which.min(Metapred_sa2$allfit)])  
 #MHT Remember this to be used on the next script, 03b_meta_lag_gnm_for_all.R
-Metapred_cen<-crosspred(basis=bvar,
-                        coef=coef(mv_cen),
-                        vcov=vcov(mv_cen),
-                        cen=metaMHT_cen,
+Metapred_sa2<-crosspred(basis=bvar_sa2,
+                        coef=coef(mv_sa2),
+                        vcov=vcov(mv_sa2),
+                        cen=metaMHT_sa2,
                         at=tpred,
                         model.link="log")  #centering
-plot(Metapred_cen)
+plot(Metapred_sa2)
 
 ## Results
-##  non-cen
-res<-data.frame(temp_mean = Metapred$predvar, 
-                RR=Metapred$allRRfit,
-                LowRR=Metapred$allRRlow,
-                HighRR=Metapred$allRRhigh)
-## cen 
-res_cen<-data.frame(temp_mean = Metapred_cen$predvar, 
-                    RR=Metapred_cen$allRRfit,
-                    LowRR=Metapred_cen$allRRlow,
-                    HighRR=Metapred_cen$allRRhigh)
+##  SA1
+res_sa1<-data.frame(temp_mean = Metapred_sa1$predvar, 
+                RR=Metapred_sa1$allRRfit,
+                LowRR=Metapred_sa1$allRRlow,
+                HighRR=Metapred_sa1$allRRhigh)
+## SA2
+res_sa2<-data.frame(temp_mean = Metapred_sa2$predvar, 
+                    RR=Metapred_sa2$allRRfit,
+                    LowRR=Metapred_sa2$allRRlow,
+                    HighRR=Metapred_sa2$allRRhigh)
 
 ## Salving the meta-analysis
-##  non-cen
-vroom_write(res, file = "Outputs/Tables/meta_gnm_overall_for_all.csv.xz")
+##  SA1
+vroom_write(res_sa1, file = "Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_for_all.csv.xz")
 ## cen 
-vroom_write(res_cen, file = "Outputs/Tables/meta_gnm_overall_cen_for_all.csv.xz")
+vroom_write(res_sa2, file = "Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_for_all.csv.xz")
 ## MHT
-MHT<-data.frame(MHT_non_cen = metaMHT, MHT_cen = metaMHT)
-vroom_write(MHT, file = "Outputs/Tables/mht.csv.xz")
+MHT<-data.frame(MHT_sa1 = metaMHT_sa1, MHT_sa2 = metaMHT_sa2)
+vroom_write(MHT, file = "Outputs/Tables/Sensitivity_analysis/mht.csv.xz")
 
 #
 

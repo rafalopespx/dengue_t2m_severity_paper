@@ -53,8 +53,8 @@ dengue_t2m_means<-dengue_t2m %>%
   ungroup() %>% 
   summarise(tmin = mean(tmin), 
             tmax = mean(tmax))
+
 knotsper<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 2)
-# knotsper<-equalknots(dengue_t2m$temp_mean, nk = 2)
 varfun<-"ns"
 
 nlag<-21

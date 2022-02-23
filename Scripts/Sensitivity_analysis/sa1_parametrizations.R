@@ -53,6 +53,8 @@ dengue_t2m_means<-dengue_t2m %>%
   ungroup() %>% 
   summarise(tmin = mean(tmin), 
             tmax = mean(tmax))
+
+## SA1 Crossbasis parametrization
 knotsper<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 3)
 # knotsper<-equalknots(dengue_t2m$temp_mean, nk = 2)
 varfun<-"ns"
