@@ -4,29 +4,6 @@ gc()
 ### Loading packages
 source("Scripts/01_parametrizations.R")
 
-## SA1 Crossbasis parametrization
-knotsper_sa1<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 3)
-varfun<-"ns"
-nlag<-21
-xlag<-0:nlag
-lagnk <- 3
-klag<-logknots(nlag,lagnk)
-lagfun<-"ns"
-
-argvar_sa1<-list(fun=varfun, knots=knotsper_sa1, int=F)
-arglag_sa1<-list(fun=lagfun, knots=klag,int=T)
-
-## SA2 Crossbasis parametrization
-knotsper_sa2<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 2)
-varfun<-"ns"
-nlag<-21
-xlag<-0:nlag
-klag<-c(1,2,7,14)
-lagfun<-"ns"
-
-argvar_sa2<-list(fun=varfun, knots=knotsper_sa2, int=F)
-arglag_sa2<-list(fun=lagfun, knots=klag,int=T)
-
 states<-names_stacked
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
@@ -62,11 +39,11 @@ for (i in 1:5) {
   
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   
-  ## SA1
+  ## SA1 Crossbasis parametrization
   cb_sa1 <- crossbasis(data_region$temp_mean, lag=nlag, argvar=argvar_sa1, arglag=arglag_sa1)
   bvar_sa1 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa1,"argvar_sa1")))
   
-  ## SA2
+  ## SA2 Crossbasis parametrization
   cb_sa2 <- crossbasis(data_region$temp_mean, lag=nlag, argvar=argvar_sa2, arglag=arglag_sa2)
   bvar_sa2 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa2,"argvar_sa2")))
   
@@ -119,7 +96,7 @@ for (i in 1:5) {
   
   ## Predictions from the meta-analysis
   # 3.1. Prediction overall without centering
-  ## 
+  ## NAO RODA, INVESTIGAR PQ, JA FORAM FEITAS TENTATIVAS COM PARAMETRIZACAO NACIONAL, REGIONAL
   Metapred_region_sa1<-crosspred(basis=bvar_sa1,
                                  coef=coef(mv_region_sa1),
                                  vcov=vcov(mv_region_sa1),
@@ -137,40 +114,69 @@ for (i in 1:5) {
   
   # 3.2 Prediction overall centering mht
   ## 
-  (metaMHT_region[i]<-Metapred_region$predvar[which.min(Metapred_region$allfit)])  #MHT    
-  Metapred_region<-crosspred(basis=bvar_region,
-                             coef=coef(mv_region),
-                             vcov=vcov(mv_region),
-                             cen=metaMHT_region[i],
+  (metaMHT_region_sa1[i]<-Metapred_region_sa1$predvar[which.min(Metapred_region_sa1$allfit)])  #MHT    
+  Metapred_region_sa1<-crosspred(basis=bvar_sa1,
+                             coef=coef(mv_region_sa1),
+                             vcov=vcov(mv_region_sa2),
+                             cen=metaMHT_region_sa1[i],
                              at=tpred_region,
                              model.link="log")  #centering
-  plot(Metapred_region)
+  plot(Metapred_region_sa1)
+  
+  
+  (metaMHT_region_sa2[i]<-Metapred_region_sa2$predvar[which.min(Metapred_region_sa2$allfit)])  #MHT    
+  Metapred_region_sa2<-crosspred(basis=bvar_sa2,
+                                 coef=coef(mv_region_sa2),
+                                 vcov=vcov(mv_region_sa2),
+                                 cen=metaMHT_region_sa2[i],
+                                 at=tpred_region,
+                                 model.link="log")  #centering
+  plot(Metapred_region_sa2)
   ## Results
   ### 
-  res_region[[i]]<-data.frame(temp_mean = Metapred_region$predvar, 
-                              RR=Metapred_region$allRRfit,
-                              LowRR=Metapred_region$allRRlow,
-                              HighRR=Metapred_region$allRRhigh)
-  res_region[[i]]$region<-regions_names[i]
+  res_region_sa1[[i]]<-data.frame(temp_mean = Metapred_region_sa1$predvar, 
+                              RR=Metapred_region_sa1$allRRfit,
+                              LowRR=Metapred_region_sa1$allRRlow,
+                              HighRR=Metapred_region_sa1$allRRhigh)
+  res_region_sa1[[i]]$region<-regions_names[i]
+  
+  
+  res_region_sa2[[i]]<-data.frame(temp_mean = Metapred_region_sa2$predvar, 
+                                  RR=Metapred_region_sa2$allRRfit,
+                                  LowRR=Metapred_region_sa2$allRRlow,
+                                  HighRR=Metapred_region_sa2$allRRhigh)
+  res_region_sa2[[i]]$region<-regions_names[i]
   
   ## Salving the metanalysis
   ### 
-  vroom_write(res_region[[i]], 
-              file = paste0("Outputs/Tables/meta_gnm_overall_region_", regions_names[i],".csv.xz"))
+  vroom_write(res_region_sa1[[i]], 
+              file = paste0("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_region_", regions_names[i],".csv.xz"))
+  
+  
+  vroom_write(res_region_sa2[[i]], 
+              file = paste0("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_region_", regions_names[i],".csv.xz"))
   
   gc()
 }
 
 # Binding by Regions
 ## 
-res_region<-res_region %>% 
+res_region_sa1<-res_region_sa1 %>% 
+  bind_rows()
+res_region_sa2<-res_region_sa2 %>% 
   bind_rows()
 
 # Saving
-vroom_write(data.frame(MHT = metaMHT_region, region = regions_names), 
-            file = "Outputs/Tables/metamht_regions.csv.xz")
+vroom_write(data.frame(MHT = metaMHT_region_sa1, region = regions_names), 
+            file = "Outputs/Tables/Sensitivity_analysis/SA1_metamht_regions.csv.xz")
 
-vroom_write(res_region, 
-            file = "Outputs/Tables/meta_gnm_overall_all_regions.csv.xz")
+vroom_write(res_region_sa1, 
+            file = "Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_all_regions.csv.xz")
+
+vroom_write(data.frame(MHT = metaMHT_region_sa2, region = regions_names), 
+            file = "Outputs/Tables/Sensitivity_analysis/SA2_metamht_regions.csv.xz")
+
+vroom_write(res_region_sa2, 
+            file = "Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_all_regions.csv.xz")
 
 #

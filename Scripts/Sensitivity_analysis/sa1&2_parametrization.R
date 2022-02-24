@@ -1,6 +1,5 @@
 ## SA1 Crossbasis parametrization
 knotsper_sa1<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 3)
-# knotsper<-equalknots(dengue_t2m$temp_mean, nk = 2)
 varfun_sa1<-"ns"
 
 nlag_sa1<-21
@@ -19,7 +18,6 @@ blag_sa1 <- do.call("onebasis",c(list(x=xlag_sa1),attr(cb_sa1,"arglag_sa1")))
 
 ## SA2 Crossbasis parametrization
 knotsper_sa2<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 2)
-# knotsper<-equalknots(dengue_t2m$temp_mean, nk = 2)
 varfun_sa2<-"ns"
 
 nlag_sa2<-21
