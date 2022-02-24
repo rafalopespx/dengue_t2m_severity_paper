@@ -132,6 +132,7 @@ for (i in 1:stacked_levels) {
          dpi = 300)
 }
 
+## Precisa manejar as listas pra ter elas separadas
 ## RR 95% t2m
 ## sa1
 RR_95_05_overall_sa1<-RR_95_05_overall %>% 
@@ -164,7 +165,7 @@ plot_overall_state_sa1<-RR_overall_list_sa1 %>%
   geom_line(aes(y=1, x=temp_mean))+
   geom_ribbon(aes(ymin = LowRR,ymax = HighRR),fill="grey80",alpha=0.5) +
   geom_line(colour="#cb181d",size=1) +
-  geom_point(data = MHT_states, aes(temp_mean,1),
+  geom_point(data = MHT_states_sa1, aes(temp_mean,1),
              shape = 21,
              fill = "white",
              size = 2,
@@ -189,7 +190,24 @@ ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_all_state_overall_effe
 ## sa2
 xlab<-pretty(RR_overall_list_sa2$temp_mean)
 
-plot_overall_state_sa2<-RR_overall_list_sa2 %+% plot_overall_state_sa1
+plot_overall_state_sa2<-RR_overall_list_sa2 %>% 
+  ggplot(aes(temp_mean, RR)) + 
+  geom_line(aes(y=1, x=temp_mean))+
+  geom_ribbon(aes(ymin = LowRR,ymax = HighRR),fill="grey80",alpha=0.5) +
+  geom_line(colour="#cb181d",size=1) +
+  geom_point(data = MHT_states_sa2, aes(temp_mean,1),
+             shape = 21,
+             fill = "white",
+             size = 2,
+             colour="#cb181d",
+             show.legend = FALSE) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank()) +
+  labs(x = "Mean Temperature [ºC]", 
+       y = "Dengue Hosp. RR",
+       title="Temperature and Dengue Hospitalization",
+       subtitle=paste0("Overall by State, 2010-2019"))+
+  facet_geo(abbrev_state~., grid = "br_states_grid1", scales = "free")
 
 plot_overall_state_sa2
 
@@ -217,7 +235,7 @@ plot_rr_lag_5th_sa1<-cold_5th_val_lag %>%
        y = "Dengue Hosp. RR ", 
        title = "Cold (5th) effects on lags", 
        subtitle = "All States, 2010-2019", 
-       caption = "On the sa2 Scale")+
+       caption = "On the sa1 Scale")+
   facet_geo(abbrev_state~., grid = "br_states_grid1", scales = "free")+
   theme_minimal()
 plot_rr_lag_5th_sa1
@@ -232,7 +250,24 @@ ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_all_state_on_50th_effe
 cold_5th_val_lag<-RRVal_lag_list_sa2 %>% 
   filter(idE == "50")
 
-plot_rr_lag_5th_sa2<-RRVal_lag_list_sa2 %+% plot_rr_lag_5th_sa2
+plot_rr_lag_5th_sa2<-cold_5th_val_lag %>% 
+  ggplot(aes(lag, RR, ymin =LowRR , ymax = HighRR)) + 
+  geom_line(aes(y=1, x = lag))+
+  geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR, colour = factor(idE)),
+                 size = .8, show.legend = FALSE) +
+  geom_point(shape = 21, fill = "white", size = 2, aes(colour = factor(idE)),
+             show.legend = FALSE) +
+  scale_x_continuous(breaks = seq(0, 21, 2)) +
+  scale_colour_manual(values = c("#4575b4")) +
+  labs(x = "lag (days)", 
+       y = "Dengue Hosp. RR ", 
+       title = "Cold (5th) effects on lags", 
+       subtitle = "All States, 2010-2019", 
+       caption = "On the sa2 Scale")+
+  facet_geo(abbrev_state~., grid = "br_states_grid1", scales = "free")+
+  theme_minimal()
+
+plot_rr_lag_5th_sa2
 
 ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_all_state_on_50th_effects.png"),
        plot = plot_rr_lag_5th_sa2,
@@ -270,10 +305,24 @@ ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_scale_all_state_heat_9
 
 
 ## SA2
-heat_95th_val_lag<-RRVal_lag_list_sa1 %>% 
+heat_95th_val_lag<-RRVal_lag_list_sa2 %>% 
   filter(idE == "95")
 
-plot_rr_lag_95th_sa2<-heat_95th_val_lag %+% plot_rr_lag_95th_sa1
+plot_rr_lag_95th_sa2<-heat_95th_val_lag %>% 
+  ggplot(aes(lag, RR, ymin =LowRR , ymax = HighRR)) + 
+  geom_line(aes(y=1, x = lag))+
+  geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR, colour = factor(idE)),
+                 size = .8, show.legend = FALSE) +
+  geom_point(shape = 21, fill = "white", size = 2, aes(colour = factor(idE)),
+             show.legend = FALSE) +
+  scale_x_continuous(breaks = seq(0, 21, 2)) +
+  scale_colour_manual(values = c("#d73027")) +
+  labs(x = "lag (days)", 
+       y = "Dengue Hosp. RR ", 
+       title = "Heat (95th) effects on lags", 
+       subtitle = "All States, 2010-2019", caption = "On the sa2 Scale")+
+  facet_geo(abbrev_state~., grid = "br_states_grid1", scales = "free")+
+  theme_minimal()
 
 plot_rr_lag_95th_sa2
 
