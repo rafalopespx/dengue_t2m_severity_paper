@@ -32,7 +32,7 @@ for (i in 1:stacked_levels){
   data<-dengue_t2m %>% 
     filter(code_stacked == codes_stacked[i])
   
-  knotsper<-equalknots(data$temp_mean, nk = 2) ## Ficar com o Knotsper Brasil
+  knotsper<-equalknots(data$temp_mean, nk = 2) ## 
   varfun<-"ns"
 
   nlag<-21

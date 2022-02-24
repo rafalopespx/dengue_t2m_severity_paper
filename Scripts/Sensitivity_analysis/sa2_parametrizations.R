@@ -61,7 +61,7 @@ varfun<-"ns"
 
 nlag<-21
 xlag<-0:nlag
-lagnk <- 3
+# lagnk <- 3
 klag<-c(1,2,7,14)
 lagfun<-"ns"
 
