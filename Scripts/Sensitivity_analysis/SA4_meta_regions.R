@@ -3,8 +3,29 @@ gc()
 
 ### Loading packages
 source("Scripts/01_parametrizations.R")
-gc()
-source("Scripts/Sensitivity_analysis/sa1&2_parametrization.R")
+
+## SA1 Crossbasis parametrization
+knotsper_sa1<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 3)
+varfun<-"ns"
+nlag<-21
+xlag<-0:nlag
+lagnk <- 3
+klag<-logknots(nlag,lagnk)
+lagfun<-"ns"
+
+argvar_sa1<-list(fun=varfun, knots=knotsper_sa1, int=F)
+arglag_sa1<-list(fun=lagfun, knots=klag,int=T)
+
+## SA2 Crossbasis parametrization
+knotsper_sa2<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 2)
+varfun<-"ns"
+nlag<-21
+xlag<-0:nlag
+klag<-c(1,2,7,14)
+lagfun<-"ns"
+
+argvar_sa2<-list(fun=varfun, knots=knotsper_sa2, int=F)
+arglag_sa2<-list(fun=lagfun, knots=klag,int=T)
 
 states<-names_stacked
 
@@ -41,11 +62,13 @@ for (i in 1:5) {
   
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   
-  cb_region_sa1<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar_sa1, arglag = arglag_sa1)
-  bvar_region_sa1<-do.call("onebasis", c(list(x=data_region$temp_mean), attr(cb_region_sa1, "argvar_sa1")))
+  ## SA1
+  cb_sa1 <- crossbasis(data_region$temp_mean, lag=nlag, argvar=argvar_sa1, arglag=arglag_sa1)
+  bvar_sa1 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa1,"argvar_sa1")))
   
-  cb_region_sa2<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar_sa2, arglag = arglag_sa2)
-  bvar_region_sa2<-do.call("onebasis", c(list(x=data_region$temp_mean), attr(cb_region_sa2, "argvar_sa2")))
+  ## SA2
+  cb_sa2 <- crossbasis(data_region$temp_mean, lag=nlag, argvar=argvar_sa2, arglag=arglag_sa2)
+  bvar_sa2 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa2,"argvar_sa2")))
   
   # Filtering Coef Matrix and VCOV matrix to the states for the region
   # coef
@@ -86,9 +109,9 @@ for (i in 1:5) {
   ## Meta-analysis
   ### 
   mv_region_sa1<- mvmeta(coef_region_sa1~1,
-                     vcov_region_sa1,
-                     method="reml",
-                     control=list(showiter=T))
+                         vcov_region_sa1,
+                         method="reml",
+                         control=list(showiter=T))
   mv_region_sa2<- mvmeta(coef_region_sa2~1,
                          vcov_region_sa2,
                          method="reml",
@@ -97,12 +120,20 @@ for (i in 1:5) {
   ## Predictions from the meta-analysis
   # 3.1. Prediction overall without centering
   ## 
-  Metapred_region_sa1<-crosspred(basis=bvar_region_sa1,
-                             coef=coef(mv_region_sa1),
-                             vcov=vcov(mv_region_sa1),
-                             at=tpred_region,
-                             model.link="log")
-  plot(Metapred_region)
+  Metapred_region_sa1<-crosspred(basis=bvar_sa1,
+                                 coef=coef(mv_region_sa1),
+                                 vcov=vcov(mv_region_sa1),
+                                 at=tpred_region,
+                                 model.link="log")
+  plot(Metapred_region_sa1)
+  
+  
+  Metapred_region_sa2<-crosspred(basis=bvar_sa2,
+                                 coef=coef(mv_region_sa2),
+                                 vcov=vcov(mv_region_sa2),
+                                 at=tpred_region,
+                                 model.link="log")
+  plot(Metapred_region_sa2)
   
   # 3.2 Prediction overall centering mht
   ## 
