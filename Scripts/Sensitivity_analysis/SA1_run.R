@@ -133,7 +133,7 @@ for (i in 1:stacked_levels){
   RRVal_lag_list[[i]]<-RR_list$lag
   RR_overall_list[[i]]<-RR_list$overall
   
-  gc()
+  # gc()
   
 }
 

@@ -14,8 +14,8 @@ if(!require(geofacet)){install.packages("geofacet"); library(geofacet)}
 RRVal_lag_list_sa1 <- vroom("Outputs/Tables/Sensitivity_analysis/SA1_RRVal_lag_gnm.csv.xz")
 RR_overall_list_sa1 <- vroom("Outputs/Tables/Sensitivity_analysis/SA1_RR_overall_gnm.csv.xz")
 ## SA2
-RRVal_lag_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/SA1_RRVal_lag_gnm.csv.xz")
-RR_overall_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/SA1_RR_overall_gnm.csv.xz")
+RRVal_lag_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/SA2_RRVal_lag_gnm.csv.xz")
+RR_overall_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/SA2_RR_overall_gnm.csv.xz")
 
 ## Quantiles t2m
 quantiles_t2m<-vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
@@ -56,8 +56,8 @@ for (i in 1:stacked_levels) {
     filter(temp_mean <= quantile_state$q95)
   
   # Plot RR Lag
-  ## 
-  ylab<-pretty(c(RR_lag_sa1$LowRR,RR_lag_sa2$HighRR))
+  ## SA1
+  ylab<-pretty(c(RR_lag_sa1$LowRR,RR_lag_sa1$HighRR))
   
   plot_rr_lag_sa1<-RR_lag_sa1 %>% 
     ggplot(aes(lag, RR, ymin =LowRR , ymax = HighRR)) + 
@@ -73,10 +73,13 @@ for (i in 1:stacked_levels) {
     facet_wrap(vars(idE),nrow=2)+
     theme_minimal()
   
+  ## SA2
+  ylab<-pretty(c(RR_lag_sa2$LowRR,RR_lag_sa2$HighRR))
+  
   plot_rr_lag_sa2<-plot_rr_lag_sa1 %+% RR_lag_sa2
   
   # Plot RR Overall
-  ## Absolute
+  ## SA1
   xlab<-pretty(RR_overall_sa1$temp_mean)
   ylab<-pretty(c(RR_overall_sa1$LowRR,RR_overall_sa1$HighRR))
   mht<-RR_overall_sa1$temp_mean[which.min(RR_overall_sa1$RR)]
@@ -97,47 +100,66 @@ for (i in 1:stacked_levels) {
     theme(panel.grid.minor = element_blank()) +
     labs(x = "Mean Temperature [ºC]", y = "Dengue Hosp. RR", title = names_stacked_plot[i])
   
+  ## SA2
+  xlab<-pretty(RR_overall_sa2$temp_mean)
+  ylab<-pretty(c(RR_overall_sa2$LowRR,RR_overall_sa1$HighRR))
+  mht<-RR_overall_sa2$temp_mean[which.min(RR_overall_sa2$RR)]
+  
   plot_rr_overall_sa2<-plot_rr_overall_sa1 %+% RR_overall_sa2
   
-  plot_list[[i]]<-list(rr_lag = plot_rr_lag, 
-                       rr_overall = plot_rr_overall)
+  plot_list[[i]]$sa1<-list(rr_lag = plot_rr_lag_sa1, 
+                       rr_overall = plot_rr_overall_sa1)
+  plot_list[[i]]$sa2<-list(rr_lag = plot_rr_lag_sa2, 
+                           rr_overall = plot_rr_overall_sa2)
   
   # Patchwork Plot to be saved
-  plot_final[[i]]<-(plot_rr_lag | plot_rr_overall)+
+  plot_final[[i]]$sa1<-(plot_rr_lag_sa1 | plot_rr_overall_sa1)+
+    plot_layout(guides = "collect")
+  plot_final[[i]]$sa2<-(plot_rr_lag_sa2 | plot_rr_overall_sa2)+
     plot_layout(guides = "collect")
   
   # PAY ATTENTION TO THE NAME OF FILES YOU ARE SAVING, 
   # MAKE SURE IT IS THE CORRECT, TO NOT SUBSTITUTE FOR AN EXISTING ONE!
-  ggsave(paste0("Outputs/Plots/gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
-         plot = plot_final[[i]],
+  ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
+         plot = plot_final[[i]]$sa1,
+         width = 9,
+         height = 7,
+         dpi = 300)
+  ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
+         plot = plot_final[[i]]$sa2,
          width = 9,
          height = 7,
          dpi = 300)
 }
 
 ## RR 95% t2m
-## Relative
-RR_95_05_overall_relative<-RR_95_05_overall_relative %>% 
+## sa1
+RR_95_05_overall_sa1<-RR_95_05_overall %>% 
   bind_rows()
 
-vroom_write(file = "Outputs/Tables/RR_95_05_t2m_overall_relative.csv.xz",
-            RR_95_05_overall_relative)
-## Aboslute
-RR_95_05_overall<-RR_95_05_overall %>% 
+vroom_write(file = "Outputs/Tables/Sensitivity_analysis/SA1_RR_95_05_t2m_overall.csv.xz",
+            RR_95_05_overall_sa1)
+## sa2
+RR_95_05_overall_sa2<-RR_95_05_overall_sa2 %>% 
   bind_rows()
 
-vroom_write(file = "Outputs/Tables/RR_95_05_t2m_overall.csv.xz", 
-            RR_95_05_overall)
+vroom_write(file = "Outputs/Tables/Sensitivity_analysis/SA2_RR_95_05_t2m_overall.csv.xz", 
+            RR_95_05_overall_sa2)
 
 ## Overall Brasil Plot
-## Absolute
-MHT_states<-RR_overall_list %>% 
+## sa1
+MHT_states_sa1<-RR_overall_list_sa1 %>% 
+  filter(RR == 1) %>% 
+  select(temp_mean, abbrev_state)
+## sa2
+MHT_states_sa2<-RR_overall_list_sa2 %>% 
   filter(RR == 1) %>% 
   select(temp_mean, abbrev_state)
 
-xlab<-pretty(RR_overall_list$temp_mean)
-# ylab<-pretty(c(RR_overall_list$LowRR, RR_overall_list$HighRR))
-plot_overall_state<-RR_overall_list %>% 
+## sa1
+xlab<-pretty(RR_overall_list_sa1$temp_mean)
+
+plot_overall_state_sa1<-RR_overall_list_sa1 %>% 
   ggplot(aes(temp_mean, RR)) + 
   geom_line(aes(y=1, x=temp_mean))+
   geom_ribbon(aes(ymin = LowRR,ymax = HighRR),fill="grey80",alpha=0.5) +
@@ -148,7 +170,6 @@ plot_overall_state<-RR_overall_list %>%
              size = 2,
              colour="#cb181d",
              show.legend = FALSE) +
-  # scale_x_continuous(breaks = xlab) +
   theme_minimal() +
   theme(panel.grid.minor = element_blank()) +
   labs(x = "Mean Temperature [ºC]", 
@@ -157,23 +178,33 @@ plot_overall_state<-RR_overall_list %>%
        subtitle=paste0("Overall by State, 2010-2019"))+
   facet_geo(abbrev_state~., grid = "br_states_grid1", scales = "free")
 
-plot_overall_state
+plot_overall_state_sa1
 
-ggsave(paste0("Outputs/Plots/gnm_all_state_overall_effects.png"),
-       plot = plot_overall_state,
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_all_state_overall_effects.png"),
+       plot = plot_overall_state_sa1,
+       width = 9,
+       height = 7,
+       dpi = 300)
+
+## sa2
+xlab<-pretty(RR_overall_list_sa2$temp_mean)
+
+plot_overall_state_sa2<-RR_overall_list_sa2 %+% plot_overall_state_sa1
+
+plot_overall_state_sa2
+
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_all_state_overall_effects.png"),
+       plot = plot_overall_state_sa2,
        width = 9,
        height = 7,
        dpi = 300)
 
 ## Cold effects on lag, 5th percentile
-## Absolute
-cold_5th_val_lag<-RRVal_lag_list %>% 
+## sa1
+cold_5th_val_lag<-RRVal_lag_list_sa1 %>% 
   filter(idE == "50")
 
-# ylab<-pretty(c(cold_5th_val_lag$LowRR,
-#                cold_5th_val_lag$HighRR))
-
-plot_rr_lag_5th<-cold_5th_val_lag %>% 
+plot_rr_lag_5th_sa1<-cold_5th_val_lag %>% 
   ggplot(aes(lag, RR, ymin =LowRR , ymax = HighRR)) + 
   geom_line(aes(y=1, x = lag))+
   geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR, colour = factor(idE)),
@@ -181,32 +212,40 @@ plot_rr_lag_5th<-cold_5th_val_lag %>%
   geom_point(shape = 21, fill = "white", size = 2, aes(colour = factor(idE)),
              show.legend = FALSE) +
   scale_x_continuous(breaks = seq(0, 21, 2)) +
-  # scale_y_continuous(breaks = ylab) +
   scale_colour_manual(values = c("#4575b4")) +
   labs(x = "lag (days)", 
        y = "Dengue Hosp. RR ", 
        title = "Cold (5th) effects on lags", 
        subtitle = "All States, 2010-2019", 
-       caption = "On the Absolute Scale")+
+       caption = "On the sa2 Scale")+
   facet_geo(abbrev_state~., grid = "br_states_grid1", scales = "free")+
   theme_minimal()
-plot_rr_lag_5th
+plot_rr_lag_5th_sa1
 
-ggsave(paste0("Outputs/Plots/gnm_all_state_on_50th_effects.png"),
-       plot = plot_rr_lag_5th,
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_all_state_on_50th_effects.png"),
+       plot = plot_rr_lag_5th_sa1,
+       width = 9,
+       height = 7,
+       dpi = 300)
+
+## SA2
+cold_5th_val_lag<-RRVal_lag_list_sa2 %>% 
+  filter(idE == "50")
+
+plot_rr_lag_5th_sa2<-RRVal_lag_list_sa2 %+% plot_rr_lag_5th_sa2
+
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_all_state_on_50th_effects.png"),
+       plot = plot_rr_lag_5th_sa2,
        width = 9,
        height = 7,
        dpi = 300)
 
 ## Heat effects on lag, 95th percentile
-## Absolute
-heat_95th_val_lag<-RRVal_lag_list %>% 
+## sa2
+heat_95th_val_lag<-RRVal_lag_list_sa1 %>% 
   filter(idE == "95")
 
-# ylab<-pretty(c(heat_95th_val_lag$LowRR,
-#                heat_95th_val_lag$HighRR))
-
-plot_rr_lag_95th<-heat_95th_val_lag %>% 
+plot_rr_lag_95th_sa1<-heat_95th_val_lag %>% 
   ggplot(aes(lag, RR, ymin =LowRR , ymax = HighRR)) + 
   geom_line(aes(y=1, x = lag))+
   geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR, colour = factor(idE)),
@@ -214,21 +253,35 @@ plot_rr_lag_95th<-heat_95th_val_lag %>%
   geom_point(shape = 21, fill = "white", size = 2, aes(colour = factor(idE)),
              show.legend = FALSE) +
   scale_x_continuous(breaks = seq(0, 21, 2)) +
-  # scale_y_continuous(breaks = ylab) +
   scale_colour_manual(values = c("#d73027")) +
   labs(x = "lag (days)", 
        y = "Dengue Hosp. RR ", 
        title = "Heat (95th) effects on lags", 
-       subtitle = "All States, 2010-2019", caption = "On the Absolute Scale")+
+       subtitle = "All States, 2010-2019", caption = "On the sa2 Scale")+
   facet_geo(abbrev_state~., grid = "br_states_grid1", scales = "free")+
   theme_minimal()
-plot_rr_lag_95th
+plot_rr_lag_95th_sa1
 
-
-ggsave(paste0("Outputs/Plots/gnm_scale_all_state_heat_95th_effects.png"),
-       plot = plot_rr_lag_95th,
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_scale_all_state_heat_95th_effects.png"),
+       plot = plot_rr_lag_95th_sa1,
        width = 9,
        height = 7,
        dpi = 300)
+
+
+## SA2
+heat_95th_val_lag<-RRVal_lag_list_sa1 %>% 
+  filter(idE == "95")
+
+plot_rr_lag_95th_sa2<-heat_95th_val_lag %+% plot_rr_lag_95th_sa1
+
+plot_rr_lag_95th_sa2
+
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_scale_all_state_heat_95th_effects.png"),
+       plot = plot_rr_lag_95th_sa2,
+       width = 9,
+       height = 7,
+       dpi = 300)
+
 
 #
