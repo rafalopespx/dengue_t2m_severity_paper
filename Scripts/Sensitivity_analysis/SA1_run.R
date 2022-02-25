@@ -51,7 +51,7 @@ for (i in 1:stacked_levels){
     filter(code_stacked == codes_stacked[i])
   
   if(s==1){
-    knotsper<-equalknots(data$temp_mean, nk = 3) ## Ficar com o Knotsper Brasil
+    knotsper<-equalknots(data$temp_mean, nk = 3) ## 
     varfun<-"ns"
     
     nlag<-21
@@ -68,7 +68,7 @@ for (i in 1:stacked_levels){
   }
   
   if(s==2){
-    knotsper<-equalknots(data$temp_mean, nk = 2) ## Ficar com o Knotsper Brasil
+    knotsper<-equalknots(data$temp_mean, nk = 2) ## 
     varfun<-"ns"
     
     nlag<-21
