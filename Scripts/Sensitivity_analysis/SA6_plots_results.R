@@ -134,15 +134,16 @@ for (i in 1:stacked_levels) {
 
 ## Precisa manejar as listas pra ter elas separadas
 ## RR 95% t2m
+RR_95_05_overall<-RR_95_05_overall %>% 
+  purrr::transpose() %>% 
+  map(bind_rows)
 ## sa1
-RR_95_05_overall_sa1<-RR_95_05_overall %>% 
-  bind_rows()
+RR_95_05_overall_sa1<-RR_95_05_overall$sa1
 
 vroom_write(file = "Outputs/Tables/Sensitivity_analysis/SA1_RR_95_05_t2m_overall.csv.xz",
             RR_95_05_overall_sa1)
 ## sa2
-RR_95_05_overall_sa2<-RR_95_05_overall_sa2 %>% 
-  bind_rows()
+RR_95_05_overall_sa2<-RR_95_05_overall$sa2
 
 vroom_write(file = "Outputs/Tables/Sensitivity_analysis/SA2_RR_95_05_t2m_overall.csv.xz", 
             RR_95_05_overall_sa2)

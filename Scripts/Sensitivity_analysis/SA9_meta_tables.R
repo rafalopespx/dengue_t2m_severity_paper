@@ -14,72 +14,16 @@ if(!require(ggforce)){install.packages("ggforce"); library(ggforce)}
 
 source("functions/functions.R")
 
-# Already run and saved. Read with code below
-#  
-# dengue_t2m<-vroom("Data/dengue_t2m_muni_2010_2019.csv.xz")
-# 
-# q05_q95_brazil<-dengue_t2m %>% 
-#   summarise(q95 = quantile(temp_mean, 0.95), 
-#             q05 = quantile(temp_mean, 0.05), 
-#             max = max(temp_mean), 
-#             min = min(temp_mean), 
-#             q33 = quantile(temp_mean, 0.33), 
-#             q66 = quantile(temp_mean, 0.66), 
-#             q50 = quantile(temp_mean, 0.5), 
-#             q25 = quantile(temp_mean, 0.25), 
-#             q75 = quantile(temp_mean, 0.75)) %>% 
-#   mutate(abbrev_state = "Brazil") %>% 
-#   as.data.frame()
-# 
-# q05_q95_states<-dengue_t2m %>% 
-#   group_by(abbrev_state) %>% 
-#   summarise(q95 = quantile(temp_mean, 0.95), 
-#             q05 = quantile(temp_mean, 0.05), 
-#             max = max(temp_mean), 
-#             min = min(temp_mean), 
-#             q33 = quantile(temp_mean, 0.33), 
-#             q66 = quantile(temp_mean, 0.66), 
-#             q50 = quantile(temp_mean, 0.5), 
-#             q25 = quantile(temp_mean, 0.25), 
-#             q75 = quantile(temp_mean, 0.75)) %>% 
-#   as.data.frame()
-# 
-# dengue_t2m<-regiao(dengue_t2m, english = T)
-# 
-# q05_q95_regions<-dengue_t2m %>% 
-#   group_by(region) %>% 
-#   summarise(q95 = quantile(temp_mean, 0.95), 
-#             q05 = quantile(temp_mean, 0.05), 
-#             max = max(temp_mean), 
-#             min = min(temp_mean), 
-#             q33 = quantile(temp_mean, 0.33), 
-#             q66 = quantile(temp_mean, 0.66), 
-#             q50 = quantile(temp_mean, 0.5), 
-#             q25 = quantile(temp_mean, 0.25), 
-#             q75 = quantile(temp_mean, 0.75)) %>% 
-#   mutate(abbrev_state  = region) %>% 
-#   as.data.frame()
-# 
-# quantiles_temp<-q05_q95_brazil %>% 
-#   bind_rows(
-#     q05_q95_states, q05_q95_regions
-#   ) %>% 
-#   select(-region)
-# 
-# vroom_write(quantiles_temp, file = "Outputs/Tables/quantiles_temp_mean.csv.xz")
-
-
 quantiles_temp <- vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
 # Whole Country Meta-analysis Data
 ## Overall Meta 
-res_state_absolute<-vroom("Outputs/Tables/meta_gnm_overall_for_all.csv.xz")
-## RR Meta
-RR_list_absolute<-vroom("Outputs/Tables/meta_gnm_RR_overall_for_all.csv.xz")
+res_state_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_for_all.csv.xz")
+res_state_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_for_all.csv.xz")
 ## RR over lag Meta
-RR_list_lag<-vroom("Outputs/Tables/meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_for_all.csv.xz")
 
 # Descriptive table for temperature
-
 table_quantiles_temp <- quantiles_temp %>%
   mutate(state = abbrev_state) %>% 
   select(state, min, q05, q25, q50, q75, q95, max) %>% 
@@ -111,7 +55,7 @@ vroom_write(table_quantiles_temp,
 ## Regions Names
 regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 ## Overall
-res_region_absolute<-vroom("Outputs/Tables/meta_gnm_overall_all_regions.csv.xz")
+res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_")
 
 MHT_per_region_absolute<-res_region_absolute %>% 
   filter(RR == 1)
