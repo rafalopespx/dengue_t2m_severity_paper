@@ -1,3 +1,13 @@
+## Cros-basis parametrization
+# Defining basis and grid
+dengue_t2m_means<-dengue_t2m %>% 
+  group_by(abbrev_state) %>% 
+  summarise(tmin = min(temp_mean), 
+            tmax = max(temp_mean)) %>%
+  ungroup() %>% 
+  summarise(tmin = mean(tmin), 
+            tmax = mean(tmax))
+
 ## SA1 Crossbasis parametrization
 knotsper_sa1<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 3)
 varfun_sa1<-"ns"

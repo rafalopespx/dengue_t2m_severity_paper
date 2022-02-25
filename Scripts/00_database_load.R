@@ -38,36 +38,7 @@ codes_stacked<-c(11,12,13,14,15,16,17, ## Code number for the states in the Nort
                  41,42,43, ## Code number for the states in the South Region
                  50,51,52,53) ## Code number for the states in the Center-West Region
 states<-names_stacked<-c("RO","AC","AM","RR","PA","AP","TO", ## Abbreviation for the states in the North Region
-                 "MA","PI","CE","RN","PB","PE","AL","SE","BA", ## Abbreviation for the states in the Northeast Region
-                 "MG","ES","RJ","SP", ## Abbreviation for the states in the Southeast Region
-                 "PR","SC","RS", ## Abbreviation for the states in the South Region
-                 "MS","MT","GO","DF") ## Abbreviation for the states in the Center-West Region
-
-## Cros-basis parametrization
-# Defining basis and grid
-dengue_t2m_means<-dengue_t2m %>% 
-  group_by(abbrev_state) %>% 
-  summarise(tmin = min(temp_mean), 
-            tmax = max(temp_mean)) %>%
-  ungroup() %>% 
-  summarise(tmin = mean(tmin), 
-            tmax = mean(tmax))
-
-knotsper<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 2)
-varfun<-"ns"
-
-nlag<-21
-xlag<-0:nlag
-lagnk <- 3
-klag<-logknots(nlag,lagnk)
-lagfun<-"ns"
-
-argvar<-list(fun=varfun, knots=knotsper, int=F)
-arglag<-list(fun=lagfun, knots=klag,int=T)
-tpred<-quantile(dengue_t2m$temp_mean, probs=(1:99)/100, na.rm=T)
-range_cb<-c(min(dengue_t2m$temp_mean):max(dengue_t2m$temp_mean))
-cb <- crossbasis(dengue_t2m$temp_mean, lag=nlag, argvar=argvar, arglag=arglag)
-bvar <- do.call("onebasis",c(list(x=dengue_t2m$temp_mean),attr(cb,"argvar")))
-blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
-
-#
+                         "MA","PI","CE","RN","PB","PE","AL","SE","BA", ## Abbreviation for the states in the Northeast Region
+                         "MG","ES","RJ","SP", ## Abbreviation for the states in the Southeast Region
+                         "PR","SC","RS", ## Abbreviation for the states in the South Region
+                         "MS","MT","GO","DF") ## Abbreviation for the states in the Center-West Region

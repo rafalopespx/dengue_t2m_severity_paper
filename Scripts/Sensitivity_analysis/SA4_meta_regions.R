@@ -1,10 +1,8 @@
 rm(list=ls())
 gc()
 
-### Loading packages
-source("Scripts/01_parametrizations.R")
-
-states<-names_stacked
+source("Scripts/00_database_load.R")
+source("Scripts/Sensitivity_analysis/sa1&2_parametrization.R")
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## Coef and Vcov SA1
@@ -40,11 +38,11 @@ for (i in 1:5) {
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   
   ## SA1 Crossbasis parametrization
-  cb_sa1 <- crossbasis(data_region$temp_mean, lag=nlag, argvar=argvar_sa1, arglag=arglag_sa1)
+  cb_sa1 <- crossbasis(data_region$temp_mean, lag=nlag_sa1, argvar=argvar_sa1, arglag=arglag_sa1)
   bvar_sa1 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa1,"argvar_sa1")))
   
   ## SA2 Crossbasis parametrization
-  cb_sa2 <- crossbasis(data_region$temp_mean, lag=nlag, argvar=argvar_sa2, arglag=arglag_sa2)
+  cb_sa2 <- crossbasis(data_region$temp_mean, lag=nlag_sa2, argvar=argvar_sa2, arglag=arglag_sa2)
   bvar_sa2 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa2,"argvar_sa2")))
   
   # Filtering Coef Matrix and VCOV matrix to the states for the region
