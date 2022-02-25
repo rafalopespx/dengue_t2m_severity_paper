@@ -14,25 +14,28 @@ if(!require(patchwork)){install.packages("patchwork"); library(patchwork)}
 regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 
 ### Overall
-res_region<-vroom("Outputs/Tables/meta_gnm_overall_all_regions.csv.xz")
+res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_all_regions.csv.xz")
+res_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_all_regions.csv.xz")
 ### RR list for lags by percentile
-RR_lag_region<-vroom("Outputs/Tables/meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
+RR_lag_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_for_all.csv.xz")
+RR_lag_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_for_all.csv.xz")
 
 ## Dose-respostas by Region
-metaMHT_region<-res_region %>% 
+## SA1
+metaMHT_region_sa1<-res_region_sa1 %>% 
   filter(RR == 1) %>% 
   select(temp_mean, region) %>% 
   mutate(region = factor(region, levels = c("North", "Northeast", "Center-West", "Southeast", "South")))
 
-xlab<-pretty(res_region$temp_mean)
-ylab<-pretty(c(res_region$LowRR, res_region$HighRR))
-plot_overall_region<-res_region %>% 
+xlab<-pretty(res_region_sa1$temp_mean)
+ylab<-pretty(c(res_region_sa1$LowRR, res_region_sa1$HighRR))
+plot_overall_region_sa1<-res_region_sa1 %>% 
   mutate(region = factor(region, levels = c("North", "Northeast", "Center-West", "Southeast", "South"))) %>% 
   ggplot(aes(temp_mean, RR)) + 
   geom_hline(yintercept = 1, size = 0.5) +
   geom_ribbon(aes(ymin = LowRR,ymax = HighRR),fill="grey80",alpha=0.5) +
   geom_line(colour="#cb181d",size=1) +
-  geom_point(data = metaMHT_region, aes(temp_mean,1),
+  geom_point(data = metaMHT_region_sa1, aes(temp_mean,1),
              shape = 21,
              fill = "white",
              size = 2,
@@ -48,10 +51,48 @@ plot_overall_region<-res_region %>%
        subtitle=paste0("Meta by Regions, 2010-2019"))+
   facet_wrap(region~., scales = "free")
 
-plot_overall_region
+plot_overall_region_sa1
 
-ggsave(plot = plot_overall_region,
-       filename = paste0("Outputs/Plots/plot_overall_regions_all_regions_gnm_meta.png"),
+ggsave(plot = plot_overall_region_sa1,
+       filename = paste0("Outputs/Plots/Sensitivity_analysis/SA1_plot_overall_regions_all_regions_gnm_meta.png"),
+       width = 9,
+       height = 7,
+       dpi = 300)
+
+## SA2
+metaMHT_region_sa2<-res_region_sa2 %>% 
+  filter(RR == 1) %>% 
+  select(temp_mean, region) %>% 
+  mutate(region = factor(region, levels = c("North", "Northeast", "Center-West", "Southeast", "South")))
+
+xlab<-pretty(res_region_sa2$temp_mean)
+ylab<-pretty(c(res_region_sa2$LowRR, res_region_sa2$HighRR))
+plot_overall_region_sa2<-res_region_sa2 %>% 
+  mutate(region = factor(region, levels = c("North", "Northeast", "Center-West", "Southeast", "South"))) %>% 
+  ggplot(aes(temp_mean, RR)) + 
+  geom_hline(yintercept = 1, size = 0.5) +
+  geom_ribbon(aes(ymin = LowRR,ymax = HighRR),fill="grey80",alpha=0.5) +
+  geom_line(colour="#cb181d",size=1) +
+  geom_point(data = metaMHT_region_sa2, aes(temp_mean,1),
+             shape = 21,
+             fill = "white",
+             size = 2,
+             colour="#cb181d",
+             show.legend = FALSE) +
+  scale_x_continuous(breaks = xlab) +
+  # scale_y_continuous(breaks = ylab) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank()) +
+  labs(x = "Mean Temperature [ºC] ", 
+       y = "Dengue Hosp. RR",
+       title="Temperature and Dengue Hospitalization",
+       subtitle=paste0("Meta by Regions, 2010-2019"))+
+  facet_wrap(region~., scales = "free")
+
+plot_overall_region_sa2
+
+ggsave(plot = plot_overall_region_sa2,
+       filename = paste0("Outputs/Plots/Sensitivity_analysis/SA2_plot_overall_regions_all_regions_gnm_meta.png"),
        width = 9,
        height = 7,
        dpi = 300)
@@ -60,10 +101,10 @@ ggsave(plot = plot_overall_region,
 
 # Percentile Plots Meta
 ## Plot effects over P0.50
-ylab<-RR_lag_region %>% 
+ylab<-RR_lag_region_sa1 %>% 
   filter(percentil == 0.50)
 ylab<-pretty(c(ylab$LowRR, ylab$HighRR))
-plot_p50<-RR_lag_region %>%
+plot_p50_sa1<-RR_lag_region_sa1 %>%
   filter(percentil == 0.50 & lag %in% seq(0,21, 1)) %>% 
   mutate(region = factor(region, levels = c("North", "Northeast", "Center-West", "Southeast", "South"))) %>% 
   ggplot(aes(x=lag, y=RR, ymin = LowRR, ymax = HighRR)) + 

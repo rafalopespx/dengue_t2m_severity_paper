@@ -96,7 +96,7 @@ for (i in 1:5) {
   
   ## Predictions from the meta-analysis
   # 3.1. Prediction overall without centering
-  ## NAO RODA, INVESTIGAR PQ, JA FORAM FEITAS TENTATIVAS COM PARAMETRIZACAO NACIONAL, REGIONAL
+  ## FUNCIONA, BASICAMENTE LEMBRAR QUE A BVAR TEM QUE PUXAR O PARAMETRO ARGVAR E NAO ARGVAR_SA1 OU SA2
   Metapred_region_sa1<-crosspred(basis=bvar_sa1,
                                  coef=coef(mv_region_sa1),
                                  vcov=vcov(mv_region_sa1),

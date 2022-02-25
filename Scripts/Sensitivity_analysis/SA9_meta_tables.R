@@ -11,7 +11,6 @@ if(!require(vroom)){install.packages("vroom"); library(vroom)}
 if(!require(gtsummary)){install.packages("gtsummary"); library(gtsummary)}
 if(!require(ggforce)){install.packages("ggforce"); library(ggforce)}
 
-
 source("functions/functions.R")
 
 quantiles_temp <- vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
@@ -55,32 +54,54 @@ vroom_write(table_quantiles_temp,
 ## Regions Names
 regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 ## Overall
-res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_")
+res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_all_regions.csv.xz")
+res_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_all_regions.csv.xz")
 
-MHT_per_region_absolute<-res_region_absolute %>% 
+MHT_per_region_sa1<-res_region_sa1 %>% 
   filter(RR == 1)
-MHT_brasil_absolute<-res_state_absolute %>% 
+MHT_brasil_sa1<-res_state_sa1 %>% 
+  filter(RR == 1)
+
+MHT_per_region_sa2<-res_region_sa2 %>% 
+  filter(RR == 1)
+MHT_brasil_sa2<-res_state_sa2 %>% 
   filter(RR == 1)
 
 ## 95th, 5th percentile
-percentile_per_region_absolute_50<-res_region_absolute %>% 
+percentile_per_region_sa1_50<-res_region_sa1 %>% 
   left_join(quantiles_temp %>% select(q50, abbrev_state),
             by = c("region"="abbrev_state")) %>% 
   rename(state=region) %>% 
   group_by(state) %>% 
   filter(abs(q50 - temp_mean) == min(abs(q50 - temp_mean))) %>% 
-  select(q50, state, RR, LowRR, HighRR) 
+  select(q50, state, RR, LowRR, HighRR)
+
+percentile_per_region_sa2_50<-res_region_sa2 %>% 
+  left_join(quantiles_temp %>% select(q50, abbrev_state),
+            by = c("region"="abbrev_state")) %>% 
+  rename(state=region) %>% 
+  group_by(state) %>% 
+  filter(abs(q50 - temp_mean) == min(abs(q50 - temp_mean))) %>% 
+  select(q50, state, RR, LowRR, HighRR)
 
 
-percentile_per_region_absolute_95<-res_region_absolute %>% 
+percentile_per_region_sa1_95<-res_region_sa1 %>% 
   left_join(quantiles_temp %>% select(q95, abbrev_state),
             by = c("region"="abbrev_state")) %>% 
   rename(state=region) %>% 
   group_by(state) %>% 
   filter(abs(q95 - temp_mean) == min(abs(q95 - temp_mean))) %>% 
-  select(q95, state, RR, LowRR, HighRR) 
+  select(q95, state, RR, LowRR, HighRR)
 
-percentile_brasil_absolute_50<-res_state_absolute %>% 
+percentile_per_region_sa2_95<-res_region_sa2 %>% 
+  left_join(quantiles_temp %>% select(q95, abbrev_state),
+            by = c("region"="abbrev_state")) %>% 
+  rename(state=region) %>% 
+  group_by(state) %>% 
+  filter(abs(q95 - temp_mean) == min(abs(q95 - temp_mean))) %>% 
+  select(q95, state, RR, LowRR, HighRR)
+
+percentile_brasil_sa1_50<-res_state_sa1 %>% 
   bind_cols(quantiles_temp %>% 
               filter(abbrev_state=="Brazil") %>% select(q50, abbrev_state)) %>% 
   filter(
@@ -88,7 +109,15 @@ percentile_brasil_absolute_50<-res_state_absolute %>%
   mutate(state = "Brazil") %>% 
   select(q50, state, RR, LowRR, HighRR)
 
-percentile_brasil_absolute_95<-res_state_absolute %>% 
+percentile_brasil_sa2_50<-res_state_sa2 %>% 
+  bind_cols(quantiles_temp %>% 
+              filter(abbrev_state=="Brazil") %>% select(q50, abbrev_state)) %>% 
+  filter(
+    abs(q50 - temp_mean) == min(abs(q50 - temp_mean))) %>% 
+  mutate(state = "Brazil") %>% 
+  select(q50, state, RR, LowRR, HighRR)
+
+percentile_brasil_sa1_95<-res_state_sa1 %>% 
   bind_cols(quantiles_temp %>% 
               filter(abbrev_state=="Brazil") %>% select(q95, abbrev_state)) %>% 
   filter(
@@ -96,18 +125,25 @@ percentile_brasil_absolute_95<-res_state_absolute %>%
   mutate(state = "Brazil") %>% 
   select(q95, state, RR, LowRR, HighRR)
 
+percentile_brasil_sa2_95<-res_state_sa2 %>% 
+  bind_cols(quantiles_temp %>% 
+              filter(abbrev_state=="Brazil") %>% select(q95, abbrev_state)) %>% 
+  filter(
+    abs(q95 - temp_mean) == min(abs(q95 - temp_mean))) %>% 
+  mutate(state = "Brazil") %>% 
+  select(q95, state, RR, LowRR, HighRR)
 
 # Aboslute
-table_ready_percentile_absolute<-
+table_ready_percentile_sa1<-
   bind_rows(
     # percentiles_meta_all_absolute_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
     # percentiles_meta_all_absolute_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th"),
     
-    percentile_per_region_absolute_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
-    percentile_per_region_absolute_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th"),
+    percentile_per_region_sa1_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
+    percentile_per_region_sa1_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th"),
     
-    percentile_brasil_absolute_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
-    percentile_brasil_absolute_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th")) %>% 
+    percentile_brasil_sa1_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
+    percentile_brasil_sa1_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th")) %>% 
   mutate(state = factor(state, 
                         levels = c(
                           "Brazil",
@@ -126,9 +162,37 @@ table_ready_percentile_absolute<-
   ) %>% 
   arrange(state)
 
-# Absolute
-table_ready_percentile_absolute <-
-  table_ready_percentile_absolute %>% 
+table_ready_percentile_sa2<-
+  bind_rows(
+    # percentiles_meta_all_absolute_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
+    # percentiles_meta_all_absolute_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th"),
+    
+    percentile_per_region_sa2_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
+    percentile_per_region_sa2_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th"),
+    
+    percentile_brasil_sa2_50 %>% rename(temp_mean = q50) %>% mutate(model = "RR 50th"),
+    percentile_brasil_sa2_95 %>% rename(temp_mean = q95) %>% mutate(model = "RR 95th")) %>% 
+  mutate(state = factor(state, 
+                        levels = c(
+                          "Brazil",
+                          "North", 
+                          # "AC", "AM", "AP", "PA", "RO", "RR", "TO",
+                          "Northeast", 
+                          # "AL","BA","CE", "MA", "PB", "PE",  "PI", "RN",  "SE",
+                          "Center-West", 
+                          # "DF", "GO", "MS", "MT",  
+                          "Southeast", 
+                          # "ES","MG", "SP", "RJ", 
+                          "South"
+                          # "PR", "RS", "SC"
+                        )
+  )
+  ) %>% 
+  arrange(state)
+
+# SA1
+table_ready_percentile_sa1 <-
+  table_ready_percentile_sa1 %>% 
   mutate(
     estimate = paste0(
       format(round(RR, 3), nsmall = 3),
@@ -140,26 +204,60 @@ table_ready_percentile_absolute <-
   ) %>% 
   select(state, estimate, model)
 
-table_ready_percentile_absolute <- 
-  table_ready_percentile_absolute %>% 
+table_ready_percentile_sa2 <-
+  table_ready_percentile_sa2 %>% 
+  mutate(
+    estimate = paste0(
+      format(round(RR, 3), nsmall = 3),
+      " (",
+      format(round(LowRR, 3), nsmall = 3),
+      "-",
+      format(round(HighRR, 3), nsmall = 3),
+      ")"),
+  ) %>% 
+  select(state, estimate, model)
+
+table_ready_percentile_sa1 <- 
+  table_ready_percentile_sa1 %>% 
   pivot_wider(names_from = model, 
               values_from = estimate)
 
-mht_ready_absolute <-
+table_ready_percentile_sa2 <- 
+  table_ready_percentile_sa2 %>% 
+  pivot_wider(names_from = model, 
+              values_from = estimate)
+
+mht_ready_sa1 <-
   bind_rows(
-    MHT_brasil_absolute %>% select(temp_mean) %>% mutate(state = "Brazil"),
+    MHT_brasil_sa1 %>% select(temp_mean) %>% mutate(state = "Brazil"),
     # MHT_meta_regions_absolute %>% rename(temp_mean = predvar),
-    MHT_per_region_absolute %>% select(region, temp_mean) %>% rename(state = region)
+    MHT_per_region_sa1 %>% select(region, temp_mean) %>% rename(state = region)
   ) %>% 
   rename(mht = temp_mean)
 
-table_rr_final_absolute <-
-  table_ready_percentile_absolute %>% left_join(mht_ready_absolute, by = "state") %>% 
+mht_ready_sa2 <-
+  bind_rows(
+    MHT_brasil_sa2 %>% select(temp_mean) %>% mutate(state = "Brazil"),
+    # MHT_meta_regions_absolute %>% rename(temp_mean = predvar),
+    MHT_per_region_sa2 %>% select(region, temp_mean) %>% rename(state = region)
+  ) %>% 
+  rename(mht = temp_mean)
+
+table_rr_final_sa1 <-
+  table_ready_percentile_sa1 %>% left_join(mht_ready_sa1, by = "state") %>% 
   select(state, mht, `RR 50th`, `RR 95th`) %>% 
   mutate(mht = format(round(mht, 1), nsmall = 1))
-table_rr_final_absolute
+table_rr_final_sa1
 
-vroom_write(table_rr_final_absolute,
-            file ="Outputs/Tables/table_1_mht_RR_absolute.csv")
+table_rr_final_sa2 <-
+  table_ready_percentile_sa2 %>% left_join(mht_ready_sa2, by = "state") %>% 
+  select(state, mht, `RR 50th`, `RR 95th`) %>% 
+  mutate(mht = format(round(mht, 1), nsmall = 1))
+table_rr_final_sa2
 
+vroom_write(table_rr_final_sa1,
+            file ="Outputs/Tables/Sensitivity_analysis/SA1_table_1_mht_RR_absolute.csv")
+
+vroom_write(table_rr_final_sa2,
+            file ="Outputs/Tables/Sensitivity_analysis/SA2_table_1_mht_RR_absolute.csv")
 #
