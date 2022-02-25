@@ -38,12 +38,14 @@ for (i in 1:5) {
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   
   ## SA1 Crossbasis parametrization
+  knotsper_sa1<-equalknots(data_region$temp_mean, nk = 3)
   cb_sa1 <- crossbasis(data_region$temp_mean, lag=nlag_sa1, argvar=argvar_sa1, arglag=arglag_sa1)
-  bvar_sa1 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa1,"argvar_sa1")))
+  bvar_sa1 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa1,"argvar")))
   
   ## SA2 Crossbasis parametrization
+  knotsper_sa2<-equalknots(data_region$temp_mean, nk = 2)
   cb_sa2 <- crossbasis(data_region$temp_mean, lag=nlag_sa2, argvar=argvar_sa2, arglag=arglag_sa2)
-  bvar_sa2 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa2,"argvar_sa2")))
+  bvar_sa2 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa2,"argvar")))
   
   # Filtering Coef Matrix and VCOV matrix to the states for the region
   # coef
@@ -111,11 +113,11 @@ for (i in 1:5) {
   plot(Metapred_region_sa2)
   
   # 3.2 Prediction overall centering mht
-  ## 
+  ## SA1
   (metaMHT_region_sa1[i]<-Metapred_region_sa1$predvar[which.min(Metapred_region_sa1$allfit)])  #MHT    
   Metapred_region_sa1<-crosspred(basis=bvar_sa1,
                              coef=coef(mv_region_sa1),
-                             vcov=vcov(mv_region_sa2),
+                             vcov=vcov(mv_region_sa1),
                              cen=metaMHT_region_sa1[i],
                              at=tpred_region,
                              model.link="log")  #centering
@@ -131,14 +133,14 @@ for (i in 1:5) {
                                  model.link="log")  #centering
   plot(Metapred_region_sa2)
   ## Results
-  ### 
+  ### SA1 
   res_region_sa1[[i]]<-data.frame(temp_mean = Metapred_region_sa1$predvar, 
                               RR=Metapred_region_sa1$allRRfit,
                               LowRR=Metapred_region_sa1$allRRlow,
                               HighRR=Metapred_region_sa1$allRRhigh)
   res_region_sa1[[i]]$region<-regions_names[i]
   
-  
+  ## SA2
   res_region_sa2[[i]]<-data.frame(temp_mean = Metapred_region_sa2$predvar, 
                                   RR=Metapred_region_sa2$allRRfit,
                                   LowRR=Metapred_region_sa2$allRRlow,
