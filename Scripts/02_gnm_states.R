@@ -49,10 +49,10 @@ for (i in 1:stacked_levels){
   
   ## DLNM
   nyear<-length(unique(data$year))
-  formula.gnm<-"Cases ~ cb+dow+ns(date, df=7*nyear)"
+  formula.gnm<-"Cases ~ cb+ns(date, df=7*nyear)"
   
   model.gnm<-gnm(as.formula(formula.gnm), 
-                 eliminate = month_city, 
+                 eliminate = month_city_dow, 
                  data=data, 
                  family = quasipoisson, 
                  na.action="na.exclude")  

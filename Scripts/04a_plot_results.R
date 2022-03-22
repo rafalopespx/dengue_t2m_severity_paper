@@ -100,13 +100,6 @@ for (i in 1:stacked_levels) {
 }
 
 ## RR 95% t2m
-## Relative
-RR_95_05_overall_relative<-RR_95_05_overall_relative %>% 
-  bind_rows()
-
-vroom_write(file = "Outputs/Tables/RR_95_05_t2m_overall_relative.csv.xz",
-            RR_95_05_overall_relative)
-## Aboslute
 RR_95_05_overall<-RR_95_05_overall %>% 
   bind_rows()
 

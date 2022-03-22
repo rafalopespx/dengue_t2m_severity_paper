@@ -39,7 +39,9 @@ dengue_table_region<-table_ready %>%
   bold_labels() %>% 
   modify_caption("Table 1. Raw data Dengue Hospitalizations, by Regions")
 
-dengue_table_region
+dengue_table_region %>% 
+  as_gt() %>% 
+  gt::as_latex()
 
 dengue_table_region %>% 
   as_flex_table() %>%

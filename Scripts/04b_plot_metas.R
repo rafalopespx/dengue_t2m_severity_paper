@@ -8,6 +8,7 @@ if(!require(lubridate)){install.packages("lubridate"); library(lubridate)}
 if(!require(readr)){install.packages("readr"); library(readr)}
 if(!require(vroom)){install.packages("vroom"); library(vroom)}
 if(!require(patchwork)){install.packages("patchwork"); library(patchwork)}
+if(!require(geofacet)){install.packages("geofacet"); library(geofacet)}
 
 ## Relative Scale
 ## Overall Meta 

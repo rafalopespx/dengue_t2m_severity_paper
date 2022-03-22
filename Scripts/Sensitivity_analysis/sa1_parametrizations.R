@@ -24,7 +24,8 @@ dengue_t2m<-vroom("Data/dengue_t2m_stratas_2010_2019.csv.xz")
 
 dengue_t2m <- 
   dengue_t2m %>% 
-  mutate(month_city          = factor(paste(month, name_muni, sep = "_"))
+  mutate(month_city          = factor(paste(month, name_muni, sep = "_")),
+         month_city_dow      = factor(paste(month, name_muni, dow, sep = "_"))
   )
 
 # estados
