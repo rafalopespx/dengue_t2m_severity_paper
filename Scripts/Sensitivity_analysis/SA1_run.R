@@ -87,13 +87,13 @@ for (i in 1:stacked_levels){
   
   ## DLNM
   nyear<-length(unique(data$year))
-  formula.gnm<-"Cases ~ cb+dow+ns(date, df=7*nyear)"
+  formula.gnm<-"Cases ~ cb+ns(date, df=7*nyear)"
   
   model.gnm<-gnm(as.formula(formula.gnm), 
-                 eliminate = month_city, 
+                 eliminate = month_city_dow, 
                  data=data, 
                  family = quasipoisson, 
-                 na.action="na.exclude")  
+                 na.action="na.exclude")
   
   ## Cross-pred
   pred.gnm<-crosspred(cb,model.gnm, at=tpred_state) 
@@ -133,7 +133,7 @@ for (i in 1:stacked_levels){
   RRVal_lag_list[[i]]<-RR_list$lag
   RR_overall_list[[i]]<-RR_list$overall
   
-  # gc()
+  gc()
   
 }
 
