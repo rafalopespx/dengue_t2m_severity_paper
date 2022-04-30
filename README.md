@@ -1,4 +1,4 @@
-# Ambient Temperature and Dengue Hospitalisation in Brazil over a 10 years period, 2010-2019: a times series analysis
+# Ambient Temperature and Dengue Hospitalisation in Brazil over a 10 year period, 2010-2019: a times series analysis
 
 [Rafael Lopes Paixão da Silva<sup>1,2,3,4</sup>](https://orcid.org/0000-0002-9416-6145), [Xavier Basagaña<sup>2,3,4</sup>](https://orcid.org/0000-0002-8457-1489), [Leonardo S. L. Bastos<sup>5</sup>](https://orcid.org/0000-0001-7833-0403), [Fernando A. Bozza<sup>6</sup>](https://orcid.org/0000-0003-4878-0256 ), [Otavio T. Ranzani<sup>2,3,4,7</sup>](https://orcid.org/0000-0002-4677-6862)
 
