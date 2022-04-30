@@ -52,13 +52,12 @@ ISGlobal, Dr. Aiguader, 88, 08003 Barcelona, Spain
 
 <!---
 ```
-@article{lopes2022denguet2m, 
-          title = {Ambient Temperature and Dengue Hospitalisation in Brazil over a 10 years period, 2010-2019: a times series analysis},
-          author = {Rafael Lopes Paixão da Silva, Xavier Basagaña, Leonardo S. L. Bastos, Fernando A. Bozza, Otavio T. Ranzani},
-          year = {2022},
-          journal = {},
-          volume = {},
-          pages = {}
+@article{da2022ambient,
+  title={Ambient Temperature and Dengue Hospitalisation in Brazil over a 10-year period, 2010-2019: a times series analysis},
+  author={da Silva, Rafael Lopes Paixao and Basagana, Xavier and Bastos, Leonardo SL and Bozza, Fernando A and Ranzani, Otavio T},
+  journal={medRxiv},
+  year={2022},
+  publisher={Cold Spring Harbor Laboratory Press}
 }
 ```
 --->
