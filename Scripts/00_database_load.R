@@ -42,3 +42,5 @@ states<-names_stacked<-c("RO","AC","AM","RR","PA","AP","TO", ## Abbreviation for
                          "MG","ES","RJ","SP", ## Abbreviation for the states in the Southeast Region
                          "PR","SC","RS", ## Abbreviation for the states in the South Region
                          "MS","MT","GO","DF") ## Abbreviation for the states in the Center-West Region
+
+#

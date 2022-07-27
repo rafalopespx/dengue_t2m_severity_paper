@@ -25,7 +25,12 @@ dengue_t2m <-
   dengue_t2m %>% 
   mutate(month_city          = factor(paste(month, name_muni, sep = "_")),
          month_city_dow      = factor(paste(month, name_muni, dow, sep = "_"))
-  )
+  ) |> 
+  arrange(code_muni, date) |> 
+  data.table::as.data.table()
+
+## Column to signalizing whic rows to keep
+dengue_t2m[,  keep:=sum(Cases)>0, by=month_city_dow]
 
 # estados
 dengue_t2m<-dengue_t2m %>% 
@@ -67,7 +72,7 @@ argvar<-list(fun=varfun, knots=knotsper, int=F)
 arglag<-list(fun=lagfun, knots=klag,int=T)
 tpred<-quantile(dengue_t2m$temp_mean, probs=(1:99)/100, na.rm=T)
 range_cb<-c(min(dengue_t2m$temp_mean):max(dengue_t2m$temp_mean))
-cb <- crossbasis(dengue_t2m$temp_mean, lag=nlag, argvar=argvar, arglag=arglag)
+cb <- crossbasis(dengue_t2m$temp_mean, lag=nlag, argvar=argvar, arglag=arglag, group = dengue_t2m$code_muni)
 bvar <- do.call("onebasis",c(list(x=dengue_t2m$temp_mean),attr(cb,"argvar")))
 blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
 

@@ -6,8 +6,8 @@ source("Scripts/01_parametrizations.R")
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## Coef and Vcov for states
-coef<-vroom("Outputs/Tables/coefficients_gnm_for_all.csv.xz")
-vcov<-vroom("Outputs/Tables/vcov_gnm_for_all.csv.xz")
+coef<-vroom("Outputs/Tables/New_run/coefficients_gnm_for_all.csv.xz")
+vcov<-vroom("Outputs/Tables/New_run/vcov_gnm_for_all.csv.xz")
 
 source("functions/functions.R")
 regions<-names_stacked 
@@ -29,11 +29,13 @@ for (i in 1:5) {
     filter(region == regions_names[i])
   
   data_region<-dengue_t2m %>% 
-    filter(abbrev_state %in% region_filter$abbrev_state)
+    filter(abbrev_state %in% region_filter$abbrev_state) |> 
+      arrange(code_muni, date) |>
+      data.table::as.data.table()
 
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   
-  cb_region<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar, arglag = arglag)
+  cb_region<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar, arglag = arglag, group = data_region$code_muni)
   bvar_region<-do.call("onebasis", c(list(x=tpred_region), attr(cb_region, "argvar")))
   
   # Filtering Coef Matrix and VCOV matrix to the states for the region
@@ -103,7 +105,7 @@ for (i in 1:5) {
   ## Salving the metanalysis
   ### 
   vroom_write(res_region[[i]], 
-              file = paste0("Outputs/Tables/meta_gnm_overall_region_", regions_names[i],".csv.xz"))
+              file = paste0("Outputs/Tables/New_run/meta_gnm_overall_region_", regions_names[i],".csv.xz"))
   
   gc()
 }
@@ -115,9 +117,9 @@ res_region<-res_region %>%
 
 # Saving
 vroom_write(data.frame(MHT = metaMHT_region, region = regions_names), 
-            file = "Outputs/Tables/metamht_regions.csv.xz")
+            file = "Outputs/Tables/New_run/metamht_regions.csv.xz")
 
 vroom_write(res_region, 
-            file = "Outputs/Tables/meta_gnm_overall_all_regions.csv.xz")
+            file = "Outputs/Tables/New_run/meta_gnm_overall_all_regions.csv.xz")
 
 #

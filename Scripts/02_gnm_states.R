@@ -29,8 +29,14 @@ mht.gnm<-c()
 
 ## Looping for GNM Stacked analysis
 for (i in 1:stacked_levels){
+  ## Filtering for the cities within a state
   data<-dengue_t2m %>% 
-    filter(code_stacked == codes_stacked[i])
+    filter(code_stacked == codes_stacked[i])|>
+    arrange(code_muni, date) |>
+    data.table::as.data.table()
+  
+  ## Taking out strata with no Cases, to avoid bias in gnm
+  # data[,  keep:=sum(Cases)>0, by=month_city_dow]
   
   knotsper<-equalknots(data$temp_mean, nk = 2) ## 
   varfun<-"ns"
@@ -45,7 +51,7 @@ for (i in 1:stacked_levels){
   arglag<-list(fun=lagfun, knots=klag,int=T)
   tpred_state<-quantile(data$temp_mean, probs=(1:99)/100, na.rm=T)
   range_cb<-c(min(data$temp_mean):max(data$temp_mean))
-  cb <- crossbasis(data$temp_mean, lag=nlag, argvar=argvar, arglag=arglag)
+  cb <- crossbasis(data$temp_mean, lag=nlag, argvar=argvar, arglag=arglag, group = data$code_muni) 
   
   ## DLNM
   nyear<-length(unique(data$year))
@@ -55,7 +61,9 @@ for (i in 1:stacked_levels){
                  eliminate = month_city_dow, 
                  data=data, 
                  family = quasipoisson, 
-                 na.action="na.exclude")  
+                 na.action="na.exclude", 
+                 subset = keep)  
+  
   
   ## Cross-pred
   pred.gnm<-crosspred(cb,model.gnm, at=tpred_state) 
@@ -108,8 +116,8 @@ RR_overall_list <- RR_overall_list %>%
   bind_rows(.id = "abbrev_state")
 
 # Saving RR, overall and lags for each state
-vroom_write(RRVal_lag_list, file = "Outputs/Tables/RRVal_lag_gnm.csv.xz")
-vroom_write(RR_overall_list, file = "Outputs/Tables/RR_overall_gnm.csv.xz")
+vroom_write(RRVal_lag_list, file = "Outputs/Tables/New_run/RRVal_lag_gnm.csv.xz")
+vroom_write(RR_overall_list, file = "Outputs/Tables/New_run/RR_overall_gnm.csv.xz")
 
 #Salving objects
 ## Coefficients Matrix
@@ -119,14 +127,14 @@ coef_df<-coef %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df, file = "Outputs/Tables/coefficients_gnm_for_all.csv.xz")
+vroom_write(coef_df, file = "Outputs/Tables/New_run/coefficients_gnm_for_all.csv.xz")
 ## Centered
 coef_df_cen<-coef_cen %>% 
   as.data.frame() %>% 
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_cen, file = "Outputs/Tables/coefficients_gnm_cen_for_all.csv.xz")
+vroom_write(coef_df_cen, file = "Outputs/Tables/New_run/coefficients_gnm_cen_for_all.csv.xz")
 
 ## q50
 coef_df_q50<-coef_q50 %>% 
@@ -134,7 +142,7 @@ coef_df_q50<-coef_q50 %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_q50, file = "Outputs/Tables/coefficients_gnm_q50_for_all.csv.xz")
+vroom_write(coef_df_q50, file = "Outputs/Tables/New_run/coefficients_gnm_q50_for_all.csv.xz")
 
 ## q95
 coef_df_q95<-coef_q95 %>% 
@@ -142,7 +150,7 @@ coef_df_q95<-coef_q95 %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_q95, file = "Outputs/Tables/coefficients_gnm_q95_for_all.csv.xz")
+vroom_write(coef_df_q95, file = "Outputs/Tables/New_run/coefficients_gnm_q95_for_all.csv.xz")
 
 ## Covariance Matrix
 ## Binding the Covariance Matrix
@@ -157,19 +165,19 @@ vcov_fun<-function(x){
 }
 ## Non-centered
 vcov_df<-vcov_fun(vcov)
-vroom_write(vcov_df, file = "Outputs/Tables/vcov_gnm_for_all.csv.xz")
+vroom_write(vcov_df, file = "Outputs/Tables/New_run/vcov_gnm_for_all.csv.xz")
 
 ## Centered
 vcov_df_cen<-vcov_fun(vcov_cen)
-vroom_write(vcov_df_cen, file = "Outputs/Tables/vcov_gnm_cen_for_all.csv.xz")
+vroom_write(vcov_df_cen, file = "Outputs/Tables/New_run/vcov_gnm_cen_for_all.csv.xz")
 
 ## vcov q50
 vcov_df_q50<-vcov_fun(vcov_q50)
-vroom_write(vcov_df_q50, file = "Outputs/Tables/vcov_gnm_q50_for_all.csv.xz")
+vroom_write(vcov_df_q50, file = "Outputs/Tables/New_run/vcov_gnm_q50_for_all.csv.xz")
 
 ## vcov q95
 vcov_df_q95<-vcov_fun(vcov_q95)
-vroom_write(vcov_df_q95, file = "Outputs/Tables/vcov_gnm_q95_for_all.csv.xz")
+vroom_write(vcov_df_q95, file = "Outputs/Tables/New_run/vcov_gnm_q95_for_all.csv.xz")
 
 
 #

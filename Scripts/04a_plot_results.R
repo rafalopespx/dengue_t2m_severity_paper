@@ -10,8 +10,8 @@ if(!require(geofacet)){install.packages("geofacet"); library(geofacet)}
 
 # Loading databases
 ## Lag and Overall
-RRVal_lag_list <- vroom("Outputs/Tables/RRVal_lag_gnm.csv.xz")
-RR_overall_list <- vroom("Outputs/Tables/RR_overall_gnm.csv.xz")
+RRVal_lag_list <- vroom("Outputs/Tables/New_run/RRVal_lag_gnm.csv.xz")
+RR_overall_list <- vroom("Outputs/Tables/New_run/RR_overall_gnm.csv.xz")
 ## Quantiles t2m
 quantiles_t2m<-vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
 
@@ -70,7 +70,8 @@ for (i in 1:stacked_levels) {
   plot_rr_overall<-RR_overall %>% 
     ggplot(aes(temp_mean, RR)) + 
     geom_hline(yintercept = 1, size = 0.5) +
-    geom_vline(xintercept = c(quantile_state$q05,quantile_state$q95), size = 0.5,colour=c("#4575b4","#d73027"),linetype="dashed") +
+    geom_vline(xintercept = c(quantile_state$q05,quantile_state$q95), 
+               size = 0.5,colour=c("#4575b4","#d73027"),linetype="dashed") +
     geom_ribbon(aes(ymin = LowRR, 
                     ymax = HighRR),
                 fill="grey80",alpha=0.2) +
@@ -88,11 +89,12 @@ for (i in 1:stacked_levels) {
   
   # Patchwork Plot to be saved
   plot_final[[i]]<-(plot_rr_lag | plot_rr_overall)+
-    plot_layout(guides = "collect")
+    plot_layout(guides = "collect")+
+    plot_annotation(tag_levels = "a")
   
   # PAY ATTENTION TO THE NAME OF FILES YOU ARE SAVING, 
   # MAKE SURE IT IS THE CORRECT, TO NOT SUBSTITUTE FOR AN EXISTING ONE!
-  ggsave(paste0("Outputs/Plots/gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
+  ggsave(paste0("Outputs/Plots/New_run/gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
          plot = plot_final[[i]],
          width = 9,
          height = 7,
@@ -103,7 +105,7 @@ for (i in 1:stacked_levels) {
 RR_95_05_overall<-RR_95_05_overall %>% 
   bind_rows()
 
-vroom_write(file = "Outputs/Tables/RR_95_05_t2m_overall.csv.xz", 
+vroom_write(file = "Outputs/Tables/New_run/RR_95_05_t2m_overall.csv.xz", 
             RR_95_05_overall)
 
 ## Overall Brasil Plot
@@ -136,7 +138,7 @@ plot_overall_state<-RR_overall_list %>%
 
 plot_overall_state
 
-ggsave(paste0("Outputs/Plots/gnm_all_state_overall_effects.png"),
+ggsave(paste0("Outputs/Plots/New_run/gnm_all_state_overall_effects.png"),
        plot = plot_overall_state,
        width = 9,
        height = 7,
@@ -169,7 +171,7 @@ plot_rr_lag_5th<-cold_5th_val_lag %>%
   theme_minimal()
 plot_rr_lag_5th
 
-ggsave(paste0("Outputs/Plots/gnm_all_state_on_50th_effects.png"),
+ggsave(paste0("Outputs/Plots/New_run/gnm_all_state_on_50th_effects.png"),
        plot = plot_rr_lag_5th,
        width = 9,
        height = 7,
@@ -202,7 +204,7 @@ plot_rr_lag_95th<-heat_95th_val_lag %>%
 plot_rr_lag_95th
 
 
-ggsave(paste0("Outputs/Plots/gnm_scale_all_state_heat_95th_effects.png"),
+ggsave(paste0("Outputs/Plots/New_run/gnm_scale_all_state_heat_95th_effects.png"),
        plot = plot_rr_lag_95th,
        width = 9,
        height = 7,

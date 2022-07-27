@@ -9,11 +9,11 @@ percentile_vector<-c(0.50, 0.95)
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## Coef and Vcov for states
-coef_q50<-vroom("Outputs/Tables/coefficients_gnm_q50_for_all.csv.xz")
-vcov_q50<-vroom("Outputs/Tables/vcov_gnm_q50_for_all.csv.xz")
+coef_q50<-vroom("Outputs/Tables/New_run/coefficients_gnm_q50_for_all.csv.xz")
+vcov_q50<-vroom("Outputs/Tables/New_run/vcov_gnm_q50_for_all.csv.xz")
 ## Coef and Vcov for states
-coef_q95<-vroom("Outputs/Tables/coefficients_gnm_q95_for_all.csv.xz")
-vcov_q95<-vroom("Outputs/Tables/vcov_gnm_q95_for_all.csv.xz")
+coef_q95<-vroom("Outputs/Tables/New_run/coefficients_gnm_q95_for_all.csv.xz")
+vcov_q95<-vroom("Outputs/Tables/New_run/vcov_gnm_q95_for_all.csv.xz")
 
 coef_list<-list(coef_q50, coef_q95)
 vcov_list<-list(vcov_q50, vcov_q95)
@@ -49,7 +49,7 @@ for (j in 1:length(percentile_vector)) {
     
     tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
     
-    cb_region<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar, arglag = arglag)
+    cb_region<-crossbasis(data_region$temp_mean, lag=nlag, argvar = argvar, arglag = arglag, group = data_region$code_muni)
     blag_region <- do.call("onebasis",c(list(x=xlag),attr(cb_region,"arglag")))
     
     # Filtering Coef Matrix and VCOV matrix to the states for the region
@@ -86,7 +86,7 @@ for (j in 1:length(percentile_vector)) {
     
     # Saving RR for the i-th region in the j-th percentile
     vroom_write(RR_list[[j]][[i]], 
-                file = paste0("Outputs/Tables/meta_RR_gnm_lags_region_", 
+                file = paste0("Outputs/Tables/New_run/meta_RR_gnm_lags_region_", 
                               regions_names[i],
                               "_percentile_", 
                               percentile_vector[j], 
@@ -100,7 +100,7 @@ for (j in 1:length(percentile_vector)) {
   
   # Saving RR for all regions in the j-th percentile
   vroom_write(RR_list[[j]], 
-              file = paste0("Outputs/Tables/meta_RR_gnm_lags_all_regions_percentile_", percentile_vector[j], ".csv.xz"))
+              file = paste0("Outputs/Tables/New_run/meta_RR_gnm_lags_all_regions_percentile_", percentile_vector[j], ".csv.xz"))
   
   cat("\t","Meta-analysis on", percentile_vector[j], "percentile over all Regions finished!", "\t")
 }
@@ -110,6 +110,6 @@ RR_list<-RR_list %>%
   bind_rows()
 
 # Salving the Metanalysis RR list
-vroom_write(RR_list, file = "Outputs/Tables/meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
+vroom_write(RR_list, file = "Outputs/Tables/New_run/meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
 
 #

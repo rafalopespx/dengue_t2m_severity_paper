@@ -55,5 +55,48 @@ vroom_write(dengue_table_region %>%
               as_tibble(), 
             file = "Outputs/Tables/dengue_region_aih_summary.csv")
 
+# Dengue Table by Year
+dengue_table_year<-table_ready |> 
+  dplyr::mutate(year = year(date_inter)) |> 
+  dplyr::select(age, age_cat, race, 
+                region, sex, 
+                time_interna, outcome, year) |>  
+  mutate(region = factor(region,
+                         levels = c("North", "Northeast", "Center-West", "Southeast", "South"))) |> 
+  tbl_summary(by = year,
+              missing = "ifany",
+              missing_text = "(Missing)",
+              percent = "column",
+              type = all_dichotomous() ~ "categorical",
+              label = list(age ~ paste0("Age, \n Median [p25, p75]"),
+                           age_cat ~ "Age in Categories",
+                           race ~ "Self-Reported Race",
+                           sex ~ "Sex",
+                           time_interna ~ paste0("Time of Hospitalization \n, Median [p25, p75]"),
+                           outcome ~ "Outcome",
+                           region ~ "Region"
+              )
+  ) |> 
+  modify_header(label ~ "**Characteristics Variables**") |> 
+  bold_labels() |>  
+  modify_caption("Table 2. Raw data Dengue Hospitalizations, by Years")
+dengue_table_year
+
+dengue_table_year %>% 
+  as_gt() %>% 
+  gt::as_latex()
+
+dengue_table_year %>% 
+  as_flex_table() %>%
+  flextable::save_as_docx(path = "Outputs/Tables/dengue_year_aih_summary.docx")
+
+dengue_table_year %>% 
+  as_flex_table() %>% 
+  flextable::save_as_pptx(path = "Outputs/Tables/dengue_year_aih_summary.pptx")
+
+vroom_write(dengue_table_year %>% 
+              as_tibble(), 
+            file = "Outputs/Tables/dengue_year_aih_summary.csv")
+
 
 #

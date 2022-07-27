@@ -5,17 +5,16 @@ gc()
 source("Scripts/01_parametrizations.R")
 
 ## TIRAR CENTERED VCOV AND COEF
-
 states<-names_stacked
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## Coef and Vcov for states
-coef<-vroom("Outputs/Tables/coefficients_gnm_for_all.csv.xz")
-vcov<-vroom("Outputs/Tables/vcov_gnm_for_all.csv.xz")
+coef<-vroom("Outputs/Tables/New_run/coefficients_gnm_for_all.csv.xz")
+vcov<-vroom("Outputs/Tables/New_run/vcov_gnm_for_all.csv.xz")
 
 ## Coef and Vcov for states, CENTERED
-coef_cen<-vroom("Outputs/Tables/coefficients_gnm_cen_for_all.csv.xz")
-vcov_cen<-vroom("Outputs/Tables/vcov_gnm_cen_for_all.csv.xz")
+coef_cen<-vroom("Outputs/Tables/New_run/coefficients_gnm_cen_for_all.csv.xz")
+vcov_cen<-vroom("Outputs/Tables/New_run/vcov_gnm_cen_for_all.csv.xz")
 
 # Putting coef and vcov in the right format again
 # coef 
@@ -114,12 +113,12 @@ res_cen<-data.frame(temp_mean = Metapred_cen$predvar,
 
 ## Salving the meta-analysis
 ##  non-cen
-vroom_write(res, file = "Outputs/Tables/meta_gnm_overall_for_all.csv.xz")
+vroom_write(res, file = "Outputs/Tables/New_run/meta_gnm_overall_for_all.csv.xz")
 ## cen 
-vroom_write(res_cen, file = "Outputs/Tables/meta_gnm_overall_cen_for_all.csv.xz")
+vroom_write(res_cen, file = "Outputs/Tables/New_run/meta_gnm_overall_cen_for_all.csv.xz")
 ## MHT
 MHT<-data.frame(MHT_non_cen = metaMHT, MHT_cen = metaMHT)
-vroom_write(MHT, file = "Outputs/Tables/mht.csv.xz")
+vroom_write(MHT, file = "Outputs/Tables/New_run/mht.csv.xz")
 
 #
 

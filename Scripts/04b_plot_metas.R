@@ -12,11 +12,11 @@ if(!require(geofacet)){install.packages("geofacet"); library(geofacet)}
 
 ## Relative Scale
 ## Overall Meta 
-res<-vroom("Outputs/Tables/meta_gnm_overall_for_all.csv.xz")
+res<-vroom("Outputs/Tables/New_run/meta_gnm_overall_for_all.csv.xz")
 ## RR Meta
-RR_list<-vroom("Outputs/Tables/meta_gnm_RR_overall_for_all.csv.xz")
+# RR_list<-vroom("Outputs/Tables/New_run/meta_gnm_RR_overall_for_all.csv.xz")
 ## RR over lag Meta
-RR_list_lag<-vroom("Outputs/Tables/meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag<-vroom("Outputs/Tables/New_run/meta_RR_gnm_lags_for_all.csv.xz")
 
 ## Dose-response Plot Meta
 metaMHT<-res$temp_mean[res$RR ==1]
@@ -48,37 +48,37 @@ plot_overall<-res %>%
 plot_overall
 
 ggsave(plot = plot_overall, 
-       filename = "Outputs/Plots/plot_overall_gnm_meta.png", 
+       filename = "Outputs/Plots/New_run/plot_overall_gnm_meta.png", 
        width = 9, 
        height = 7, 
        dpi = 300)
 
-## Plot RR meta
+# ## Plot RR meta
 # xlab<-pretty(RR_list$predvar)
 # ylab<-pretty(c(RR_list$LowRR, RR_list$HighRR))
-plot_RR<-RR_list %>% 
-  ggplot(aes(predvar, RR)) + 
-  geom_line(aes(x = predvar, y = RR, colour = typepred),size=1,
-            show.legend = T) +
-  scale_color_brewer(palette = "Set1")+
-  geom_line(aes(x=predvar, y=1), col = "black")+
-  # scale_x_continuous(breaks = xlab) +
-  # geom_hline(yintercept = 1, size = 0.5) +
-  # scale_y_continuous(breaks = ylab) +
-  theme_minimal() +
-  theme(panel.grid.minor = element_blank(), legend.position = "bottom") + 
-  labs(x = "Mean Temperature [ºC", y = "Dengue Hosp. RR",
-       title="Temperature and Dengue Hospitalization",
-       subtitle="Meta over all States, 2010-2019"
-  )+
-  facet_geo(~state, grid = "br_states_grid1", scales = "free")
-plot_RR
-
-ggsave(plot = plot_RR, 
-       filename = "Outputs/Plots/plot_RR_gnm_meta.png", 
-       width = 9, 
-       height = 7, 
-       dpi = 300)
+# plot_RR<-RR_list %>%
+#   ggplot(aes(predvar, RR)) +
+#   geom_line(aes(x = predvar, y = RR, colour = typepred),size=1,
+#             show.legend = T) +
+#   scale_color_brewer(palette = "Set1")+
+#   geom_line(aes(x=predvar, y=1), col = "black")+
+#   # scale_x_continuous(breaks = xlab) +
+#   # geom_hline(yintercept = 1, size = 0.5) +
+#   # scale_y_continuous(breaks = ylab) +
+#   theme_minimal() +
+#   theme(panel.grid.minor = element_blank(), legend.position = "bottom") +
+#   labs(x = "Mean Temperature [ºC]", y = "Dengue Hosp. RR",
+#        title="Temperature and Dengue Hospitalization",
+#        subtitle="Meta over all States, 2010-2019"
+#   )+
+#   facet_geo(~state, grid = "br_states_grid1", scales = "free")
+# plot_RR
+# 
+# ggsave(plot = plot_RR,
+#        filename = "Outputs/Plots/plot_RR_gnm_meta.png",
+#        width = 9,
+#        height = 7,
+#        dpi = 300)
 
 # Percentile Plots Meta
 ## Plot effects on the P50
@@ -86,7 +86,7 @@ ylab<-RR_list_lag %>%
   filter(percentil == 0.50)
 ylab<-pretty(c(ylab$LowRR, ylab$HighRR))
 plot_p50<-RR_list_lag %>%
-  filter(percentil == 0.50 & lag %in% seq(0,21,1)) %>% 
+  filter(percentil == 0.50 & lag %in% seq(0,21,1)) %>%
   ggplot(aes(x=lag, y=RR, ymin = LowRR, ymax = HighRR)) + 
   geom_hline(yintercept = 1, size = 0.5) +
   geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR),
@@ -102,28 +102,6 @@ plot_p50<-RR_list_lag %>%
   theme_minimal()+
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), axis.title.x = element_blank())
 plot_p50
-
-# plot_p50_zoom<-RR_list_lag %>%
-#   filter(percentil == 0.50 & lag %in% seq(1,14,1)) %>% 
-#   ggplot(aes(x=lag, y=RR, ymin = LowRR, ymax = HighRR)) + 
-#   geom_hline(yintercept = 1, size = 0.5) +
-#   geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR),
-#                  size = .8, show.legend = FALSE, colour="#d73027") +
-#   geom_point(shape = 21, fill = "white", size = 2,show.legend = FALSE) +
-#   scale_x_continuous(breaks = seq(1, 14, 2)) +
-#   scale_y_continuous(breaks = seq(0, 1.5, 0.1)) +
-#   labs(x = "Days", 
-#        y = "Dengue Hosp. RR ",
-#        # title= paste0("Effect on P0.05"),
-#        # subtitle="Lag Effects on 50th Temperature Percentile"
-#   )+
-#   theme_classic()
-# plot_p50_zoom
-# 
-# plot_p50_inset<-plot_p50+
-#     inset_element(plot_p50_zoom, 0.6, 0.6, 1, 1, align_to = "full")+
-#     plot_annotation(tag_levels = "1")
-# plot_p50_inset
 
 ## Plot effects over P0.95
 ylab<-RR_list_lag %>% 
@@ -147,32 +125,13 @@ plot_p95<-RR_list_lag %>%
   theme_minimal()
 plot_p95
 
-# plot_p95_zoom<-RR_list_lag %>%
-#   filter(percentil == 0.95 & lag %in% seq(1,14,1)) %>% 
-#   ggplot(aes(x=lag, y=RR, ymin = LowRR, ymax = HighRR)) + 
-#   geom_hline(yintercept = 1, size = 0.5) +
-#   geom_linerange(aes(x = lag, y = RR, ymin = LowRR, ymax = HighRR),
-#                  size = .8, show.legend = FALSE, colour="#d73027") +
-#   geom_point(shape = 21, fill = "white", size = 2,show.legend = FALSE) +
-#   scale_x_continuous(breaks = seq(1, 14, 2)) +
-#   scale_y_continuous(breaks = seq(0, 1.5, 0.1)) +
-#   labs(x = "Days", 
-#        y = "Dengue Hosp. RR ",
-#        # title= paste0("Effect on P0.05"),
-#        # subtitle="Lag Effects on 50th Temperature Percentile"
-#   )+
-#   theme_minimal()
-# plot_p95_zoom
-
-# plot_p95_inset<-plot_p95+
-#   inset_element(plot_p95_zoom, 0.6, 0.6, 1, 1, align_to = "full")+
-#   plot_annotation(tag_levels = "1")
-# plot_p95_inset
-
 ## Plot all together
-plot_percent<-gridExtra::grid.arrange(plot_p50, plot_p95)
+plot_percent<-(plot_p50 / plot_p95)+
+  plot_annotation(title = "Lag Effects", tag_levels = 'a')+
+  plot_layout(guides = 'collect')
+plot_percent
 
-ggsave(filename = "Outputs/Plots/percentil_effects.png", 
+ggsave(filename = "Outputs/Plots/New_run/percentil_effects.png", 
        plot = plot_percent, 
        width = 9, 
        height = 7, dpi = 300)
@@ -187,9 +146,31 @@ plot_figure1<-(plot_overall | (plot_p50 / plot_p95))+
     tag_levels = c("A", "B", "C"), theme = theme_minimal())
 plot_figure1
 
-ggsave(filename = "Outputs/Plots/figure_1_meta_analysis.png", 
+ggsave(filename = "Outputs/Plots/New_run/figure_1_meta_analysis.png", 
        plot = plot_figure1, 
        width = 9, 
        height = 7, dpi = 300)
+
+# ## All lags together
+# plot_lags<-RR_list_lag |>
+#   ggplot(aes(x=lag, y=RR, ymin = LowRR, ymax = HighRR, col = percentil)) + 
+#   geom_hline(yintercept = 1, size = 0.5) +
+#   geom_pointrange(aes(x = lag, y = RR, 
+#                 ymin = LowRR, ymax = HighRR
+#                 ),
+#                  size = .8, 
+#             show.legend = FALSE, 
+#             colour="#d73027") +
+#   geom_point(shape = 21, fill = "white", size = 2,show.legend = FALSE) +
+#   scale_x_continuous(breaks = seq(0, 21, 2)) +
+#   # scale_y_continuous(breaks = ylab) +
+#   labs(x = "lag (days)", 
+#        y = "Dengue Hosp. RR ",
+#        # title= paste0("Effect on P0.95"),
+#        subtitle="Lag Effects on 95th Temperature Percentile"
+#   )+
+#   theme_bw()+
+#   theme_minimal()
+# plot_lags
 
 #

@@ -6,11 +6,11 @@ source("Scripts/01_parametrizations.R")
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## Coef and Vcov for states
-coef_q50<-vroom("Outputs/Tables/coefficients_gnm_q50_for_all.csv.xz")
-vcov_q50<-vroom("Outputs/Tables/vcov_gnm_q50_for_all.csv.xz")
+coef_q50<-vroom("Outputs/Tables/New_run/coefficients_gnm_q50_for_all.csv.xz")
+vcov_q50<-vroom("Outputs/Tables/New_run/vcov_gnm_q50_for_all.csv.xz")
 ## Coef and Vcov for states
-coef_q95<-vroom("Outputs/Tables/coefficients_gnm_q95_for_all.csv.xz")
-vcov_q95<-vroom("Outputs/Tables/vcov_gnm_q95_for_all.csv.xz")
+coef_q95<-vroom("Outputs/Tables/New_run/coefficients_gnm_q95_for_all.csv.xz")
+vcov_q95<-vroom("Outputs/Tables/New_run/vcov_gnm_q95_for_all.csv.xz")
 
 # Running DLNMs over the cities
 metaMHT<-10.7 ## Got from the 03a_meta_gnm_for_all.R script on the line, 
@@ -63,6 +63,6 @@ RR_list<-RR_list %>%
   bind_rows()
 
 # Salving the Meta-analysis RR list
-vroom_write(RR_list, file = "Outputs/Tables/meta_RR_gnm_lags_for_all.csv.xz")
+vroom_write(RR_list, file = "Outputs/Tables/New_run/meta_RR_gnm_lags_for_all.csv.xz")
 
 #

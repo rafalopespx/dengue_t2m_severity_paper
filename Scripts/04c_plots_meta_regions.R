@@ -14,9 +14,9 @@ if(!require(patchwork)){install.packages("patchwork"); library(patchwork)}
 regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 
 ### Overall
-res_region<-vroom("Outputs/Tables/meta_gnm_overall_all_regions.csv.xz")
+res_region<-vroom("Outputs/Tables/New_run/meta_gnm_overall_all_regions.csv.xz")
 ### RR list for lags by percentile
-RR_lag_region<-vroom("Outputs/Tables/meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
+RR_lag_region<-vroom("Outputs/Tables/New_run/meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
 
 ## Dose-respostas by Region
 metaMHT_region<-res_region %>% 
@@ -51,7 +51,7 @@ plot_overall_region<-res_region %>%
 plot_overall_region
 
 ggsave(plot = plot_overall_region,
-       filename = paste0("Outputs/Plots/plot_overall_regions_all_regions_gnm_meta.png"),
+       filename = paste0("Outputs/Plots/New_run/plot_overall_regions_all_regions_gnm_meta.png"),
        width = 9,
        height = 7,
        dpi = 300)
@@ -75,8 +75,9 @@ plot_p50<-RR_lag_region %>%
   # scale_y_continuous(breaks = ylab) +
   labs(x = "lag (days)", 
        y = "Dengue Hosp. RR ",
-       title= paste0("Effect on P0.50"),
-       subtitle="Meta by Region, 2010-2019")+
+       title= paste0("50th"),
+       # subtitle="Meta by Region, 2010-2019"
+       )+
   theme_bw()+
   theme_minimal()+
   facet_wrap(region~., scales = "free")
@@ -98,17 +99,22 @@ plot_p95<-RR_lag_region %>%
   # scale_y_continuous(breaks = ylab) +
   labs(x = "lag (days)", 
        y = "Dengue Hosp. RR ",
-       title= paste0("Effect on P0.95"),
-       subtitle="Meta by Region, 2010-2019")+
+       title= paste0("95th"),
+       # subtitle="Meta by Region, 2010-2019"
+       )+
   theme_bw()+
   theme_minimal()+
   facet_wrap(region~., scales = "free")
 plot_p95
 
 ## Plot all together
-plot_percent<-gridExtra::grid.arrange(plot_p50, plot_p95)
+plot_percent<-(plot_p50 | plot_p95)+
+  plot_annotation(title = "Lag effects per pecentile", 
+                  caption = "From the Metanalysis by region")+
+  plot_layout(guides = 'collect')
+plot_percent
 
-ggsave(filename = "Outputs/Plots/percentil_effects_regions.png", 
+ggsave(filename = "Outputs/Plots/New_run/percentil_effects_regions.png", 
        plot = plot_percent, 
        width = 9, 
        height = 7, dpi = 300)
@@ -134,7 +140,7 @@ plot_percent_grid<-RR_lag_region %>%
 
 plot_percent_grid
 
-ggsave(filename = "Outputs/Plots/percentil_effects_regions_grid.png", 
+ggsave(filename = "Outputs/Plots/New_run/percentil_effects_regions_grid.png", 
        plot = plot_percent_grid, 
        width = 9, 
        height = 7, dpi = 300)
@@ -240,7 +246,7 @@ for (i in 1:5) {
                     tag_levels = c("A", "B", "C"), 
                     theme = theme_minimal())
   
-  ggsave(filename = paste0("Outputs/Plots/figure_SM_", regions_names[i], "_region_meta_analysis.png"),
+  ggsave(filename = paste0("Outputs/Plots/New_run/figure_SM_", regions_names[i], "_region_meta_analysis.png"),
          plot = plot_figure_region[[i]],
          width = 9,
          height = 7, dpi = 300)
