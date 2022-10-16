@@ -1,8 +1,24 @@
 # Ambient Temperature and Dengue Hospitalisation in Brazil over a 10 year period, 2010-2019: a times series analysis
 
-[Rafael Lopes Paixão da Silva<sup>1,2,3,4</sup>](https://orcid.org/0000-0002-9416-6145), [Xavier Basagaña<sup>2,3,4</sup>](https://orcid.org/0000-0002-8457-1489), [Leonardo S. L. Bastos<sup>5</sup>](https://orcid.org/0000-0001-7833-0403), [Fernando A. Bozza<sup>6</sup>](https://orcid.org/0000-0003-4878-0256 ), [Otavio T. Ranzani<sup>2,3,4,7</sup>](https://orcid.org/0000-0002-4677-6862)
+[Rafael Lopes Paixão da Silva<sup>1,2,3,4</sup>](https://orcid.org/0000-0002-9416-6145), 
+[Xavier Basagaña<sup>2,3,4</sup>](https://orcid.org/0000-0002-8457-1489), 
+[Leonardo S. L. Bastos<sup>5</sup>](https://orcid.org/0000-0001-7833-0403), 
+[Fernando A. Bozza<sup>6</sup>](https://orcid.org/0000-0003-4878-0256 ), 
+[Otavio T. Ranzani<sup>2,3,4,7</sup>](https://orcid.org/0000-0002-4677-6862)
 
-1 - Instituto de Física Teórica, IFT, UNESP, São Paulo, Brazil; 2 - Barcelona Institute for Global Health, ISGlobal, Barcelona, Spain; 3 - Universitat Pompeu Fabra, UPF, Barcelona, Spain; 4- CIBER Epidemiología y Salud Pública, CIBERESP, Madrid, Spain; 5 - Department of Industrial Engineering (DEI), Pontifical Catholic University of Rio de Janeiro (PUC-Rio), Rio de Janeiro, RJ, Brazil; 6 - National Institute of Infectious Disease Evandro Chagas (INI), Oswaldo Cruz Foundation (FIOCRUZ), Rio de Janeiro, RJ, Brazil; 7 - Pulmonary Division, Heart Institute (InCor), HCFMUSP, Faculdade de Medicina da Universidade de São Paulo, Brazil
+1 - Instituto de Física Teórica, IFT, UNESP, São Paulo, Brazil; 
+
+2 - Barcelona Institute for Global Health, ISGlobal, Barcelona, Spain; 
+
+3 - Universitat Pompeu Fabra, UPF, Barcelona, Spain; 
+
+4- CIBER Epidemiología y Salud Pública, CIBERESP, Madrid, Spain; 
+
+5 - Department of Industrial Engineering (DEI), Pontifical Catholic University of Rio de Janeiro (PUC-Rio), Rio de Janeiro, RJ, Brazil; 
+
+6 - National Institute of Infectious Disease Evandro Chagas (INI), Oswaldo Cruz Foundation (FIOCRUZ), Rio de Janeiro, RJ, Brazil; 
+
+7 - Pulmonary Division, Heart Institute (InCor), HCFMUSP, Faculdade de Medicina da Universidade de São Paulo, Brazil
 
 
 **Corresponding author**: 
@@ -50,7 +66,10 @@ ISGlobal, Dr. Aiguader, 88, 08003 Barcelona, Spain
     ├── README.md
     └── dengue_t2m_severity_paper.Rproj # .Rproj to help when running the analysis    
 
-<!---
+
+
+# Citation
+
 ```
 @article{da2022ambient,
   title={Ambient Temperature and Dengue Hospitalisation in Brazil over a 10-year period, 2010-2019: a times series analysis},
@@ -60,4 +79,3 @@ ISGlobal, Dr. Aiguader, 88, 08003 Barcelona, Spain
   publisher={Cold Spring Harbor Laboratory Press}
 }
 ```
---->
