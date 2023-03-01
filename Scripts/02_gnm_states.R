@@ -60,7 +60,7 @@ for (i in 1:stacked_levels){
   model.gnm<-gnm(as.formula(formula.gnm), 
                  eliminate = month_city_dow, 
                  data=data, 
-                 family = quasipoisson, 
+                 family = quasipoisson(link = "log"), 
                  na.action="na.exclude", 
                  subset = keep)  
   
