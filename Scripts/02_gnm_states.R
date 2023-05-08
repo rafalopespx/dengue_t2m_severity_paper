@@ -29,11 +29,23 @@ mht.gnm<-c()
 
 ## Looping for GNM Stacked analysis
 for (i in 1:stacked_levels){
+  
   ## Filtering for the cities within a state
-  data<-dengue_t2m %>% 
+  data<-dengue_t2m |> 
     filter(code_stacked == codes_stacked[i])|>
     arrange(code_muni, date) |>
     data.table::as.data.table()
+  
+  ## 7 days Moving Average
+  data_ma<-dengue_confirmed |> 
+    filter(code_stacked == codes_stacked[i])|>
+    arrange(code_muni, date_symptoms) |>
+    rename(date = date_symptoms) |> 
+    data.table::as.data.table()
+  
+  ## Data final
+  data<-data |> 
+    left_join(data_ma)
   
   ## Taking out strata with no Cases, to avoid bias in gnm
   # data[,  keep:=sum(Cases)>0, by=month_city_dow]
@@ -60,6 +72,7 @@ for (i in 1:stacked_levels){
   model.gnm<-gnm(as.formula(formula.gnm), 
                  eliminate = month_city_dow, 
                  data=data, 
+                 offset = log(cases_confirmed_7ma),
                  family = quasipoisson(link = "log"), 
                  na.action="na.exclude", 
                  subset = keep)  

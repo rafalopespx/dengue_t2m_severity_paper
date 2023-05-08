@@ -1,3 +1,4 @@
+## Cleaning the workspace
 rm(list=ls())
 gc()
 
@@ -17,10 +18,13 @@ if(!require(mixmeta)){install.packages("mixmeta"); library(mixmeta)}
 if(!require(mvmeta)){install.packages("mvmeta"); library(mvmeta)}
 if(!require(geofacet)){install.packages("geofacet"); library(geofacet)}
 
+## Setting the working directory
 setwd("~/Desktop/dengue_t2m_severity_paper/")
 
+## Loading the hospitalizations cases
 dengue_t2m<-vroom("Data/dengue_t2m_stratas_2010_2019.csv.xz")
 
+## Setting up month_city and month_city_dow factors
 dengue_t2m <- 
   dengue_t2m %>% 
   mutate(month_city          = factor(paste(month, name_muni, sep = "_")),
@@ -29,14 +33,28 @@ dengue_t2m <-
   arrange(code_muni, date) |> 
   data.table::as.data.table()
 
-## Column to signalizing whic rows to keep
+## Column to signalizing which rows to keep
 dengue_t2m[,  keep:=sum(Cases)>0, by=month_city_dow]
 
-# estados
-dengue_t2m<-dengue_t2m %>% 
-  mutate(code_stacked = code_state)
+## Cases dataset with moving averages
+dengue_confirmed<-vroom("Data/dengue_cases_confirmed_muni_2000_2020_complete.csv.xz")
 
-# Selecting unique values to the stacked level choosed
+## Building the moving averages to run into gnm
+dengue_confirmed<-
+  dengue_confirmed |> 
+  arrange(date_symptoms) |> 
+  group_by(code_muni) |> 
+  mutate(cases_confirmed_7ma  = zoo::rollmean(confirmed, k = 7, fill = NA, align = 'right'),
+         cases_confirmed_14ma = zoo::rollmean(confirmed, k = 14, fill = NA, align = 'right'))
+
+# States
+dengue_t2m<-dengue_t2m |> 
+  rename(code_stacked = code_state)
+
+dengue_confirmed<-dengue_confirmed |> 
+  rename(code_stacked = code_state)
+
+# Selecting unique values to the stacked level choose
 stacked_levels<-27L ## 27 States
 codes_stacked<-c(11,12,13,14,15,16,17, ## Code number for the states in the North Region
                  21,22,23,24,25,26,27,28,29, ## Code number for the states in the Northeast Region
