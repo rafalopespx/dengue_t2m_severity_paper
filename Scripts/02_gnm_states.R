@@ -1,3 +1,4 @@
+## Clean the environment
 rm(list=ls())
 gc()
 
@@ -29,6 +30,8 @@ mht.gnm<-c()
 
 ## Looping for GNM Stacked analysis
 for (i in 1:stacked_levels){
+  
+  cat("Starting state", i, "\n")
   
   ## Filtering for the cities within a state
   data<-dengue_t2m |> 
@@ -62,7 +65,7 @@ for (i in 1:stacked_levels){
   argvar<-list(fun=varfun, knots=knotsper, int=F)
   arglag<-list(fun=lagfun, knots=klag,int=T)
   tpred_state<-quantile(data$temp_mean, probs=(1:99)/100, na.rm=T)
-  range_cb<-c(min(data$temp_mean):max(data$temp_mean))
+  range_cb<-c(min(data$temp_mean, na.rm = T):max(data$temp_mean, na.rm = T))
   cb <- crossbasis(data$temp_mean, lag=nlag, argvar=argvar, arglag=arglag, group = data$code_muni) 
   
   ## DLNM
@@ -100,13 +103,13 @@ for (i in 1:stacked_levels){
   red_lag_50<-crossreduce(cb, model.gnm, 
                           type = "var", 
                           cen = 10.7, ## MHT for Brazil
-                          value = tpred[50])
+                          value = tpred_state[50])
   coef_q50[i,]<-red_lag_50$coef
   vcov_q50[[i]]<-red_lag_50$vcov
   red_lag_95<-crossreduce(cb, model.gnm, 
                           type = "var", 
                           cen = 10.7, ## MHT for Brazil
-                          value = tpred[95])
+                          value = tpred_state[95])
   coef_q95[i,]<-red_lag_95$coef
   vcov_q95[[i]]<-red_lag_95$vcov
   
