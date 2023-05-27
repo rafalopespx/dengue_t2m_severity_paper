@@ -31,7 +31,7 @@ mht.gnm<-c()
 ## Looping for GNM Stacked analysis
 for (i in 1:stacked_levels){
   
-  cat("Starting state", i, "\n")
+  cat("Starting state", states[i], "\n")
   
   ## Filtering for the cities within a state
   data<-dengue_t2m |> 
@@ -51,7 +51,7 @@ for (i in 1:stacked_levels){
     left_join(data_ma)
   
   ## Taking out strata with no Cases, to avoid bias in gnm
-  # data[,  keep:=sum(Cases)>0, by=month_city_dow]
+  data[,  keep:=sum(Cases)>0, by=month_city_dow]
   
   knotsper<-equalknots(data$temp_mean, nk = 2) ## 
   varfun<-"ns"
