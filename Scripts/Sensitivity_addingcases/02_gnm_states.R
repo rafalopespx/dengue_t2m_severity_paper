@@ -3,7 +3,7 @@ rm(list=ls())
 gc()
 
 ### Loading packages
-source("Scripts/01_parametrizations.R")
+source("Scripts/Sensitivity_addingcases/01_parametrizations.R")
 
 ## Objects to keep interest values
 RRVal_lag_list<-vector("list", stacked_levels)
@@ -42,8 +42,7 @@ for (i in 1:stacked_levels){
   ## 7 days Moving Average
   data_ma<-dengue_confirmed |> 
     filter(code_stacked == codes_stacked[i])|>
-    arrange(code_muni, date_symptoms) |>
-    rename(date = date_symptoms) |> 
+    arrange(code_muni, date) |>
     data.table::as.data.table()
   
   ## Data final
@@ -70,16 +69,18 @@ for (i in 1:stacked_levels){
   
   ## DLNM
   nyear<-length(unique(data$year))
-  formula.gnm<-"Cases ~ cb+ns(date, df=7*nyear)"
+  formula.gnm<-"Cases ~ cb+ns(date, df=7*nyear) + cases_confirmed_7ma"
   
-  model.gnm<-gnm(as.formula(formula.gnm), 
+  model.gnm<-tryCatch(gnm(as.formula(formula.gnm), 
                  eliminate = month_city_dow, 
                  data=data, 
-                 offset = log(cases_confirmed_7ma),
+                 # offset = log(cases_confirmed_7ma),
                  family = quasipoisson(link = "log"), 
                  na.action="na.exclude", 
-                 subset = keep)  
+                 subset = keep), 
+           error = function(err) NULL)
   
+  if(is.null(model.gnm)){next}
   
   ## Cross-pred
   pred.gnm<-crosspred(cb,model.gnm, at=tpred_state) 
@@ -132,8 +133,8 @@ RR_overall_list <- RR_overall_list %>%
   bind_rows(.id = "abbrev_state")
 
 # Saving RR, overall and lags for each state
-vroom_write(RRVal_lag_list, file = "Outputs/Tables/New_run/RRVal_lag_gnm.csv.xz")
-vroom_write(RR_overall_list, file = "Outputs/Tables/New_run/RR_overall_gnm.csv.xz")
+vroom_write(RRVal_lag_list, file = "Outputs/Tables/adding_cases/RRVal_lag_gnm.csv.xz")
+vroom_write(RR_overall_list, file = "Outputs/Tables/adding_cases/RR_overall_gnm.csv.xz")
 
 #Salving objects
 ## Coefficients Matrix
@@ -143,14 +144,14 @@ coef_df<-coef %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df, file = "Outputs/Tables/New_run/coefficients_gnm_for_all.csv.xz")
+vroom_write(coef_df, file = "Outputs/Tables/adding_cases/coefficients_gnm_for_all.csv.xz")
 ## Centered
 coef_df_cen<-coef_cen %>% 
   as.data.frame() %>% 
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_cen, file = "Outputs/Tables/New_run/coefficients_gnm_cen_for_all.csv.xz")
+vroom_write(coef_df_cen, file = "Outputs/Tables/adding_cases/coefficients_gnm_cen_for_all.csv.xz")
 
 ## q50
 coef_df_q50<-coef_q50 %>% 
@@ -158,7 +159,7 @@ coef_df_q50<-coef_q50 %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_q50, file = "Outputs/Tables/New_run/coefficients_gnm_q50_for_all.csv.xz")
+vroom_write(coef_df_q50, file = "Outputs/Tables/adding_cases/coefficients_gnm_q50_for_all.csv.xz")
 
 ## q95
 coef_df_q95<-coef_q95 %>% 
@@ -166,7 +167,7 @@ coef_df_q95<-coef_q95 %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_q95, file = "Outputs/Tables/New_run/coefficients_gnm_q95_for_all.csv.xz")
+vroom_write(coef_df_q95, file = "Outputs/Tables/adding_cases/coefficients_gnm_q95_for_all.csv.xz")
 
 ## Covariance Matrix
 ## Binding the Covariance Matrix
@@ -181,19 +182,19 @@ vcov_fun<-function(x){
 }
 ## Non-centered
 vcov_df<-vcov_fun(vcov)
-vroom_write(vcov_df, file = "Outputs/Tables/New_run/vcov_gnm_for_all.csv.xz")
+vroom_write(vcov_df, file = "Outputs/Tables/adding_cases/vcov_gnm_for_all.csv.xz")
 
 ## Centered
 vcov_df_cen<-vcov_fun(vcov_cen)
-vroom_write(vcov_df_cen, file = "Outputs/Tables/New_run/vcov_gnm_cen_for_all.csv.xz")
+vroom_write(vcov_df_cen, file = "Outputs/Tables/adding_cases/vcov_gnm_cen_for_all.csv.xz")
 
 ## vcov q50
 vcov_df_q50<-vcov_fun(vcov_q50)
-vroom_write(vcov_df_q50, file = "Outputs/Tables/New_run/vcov_gnm_q50_for_all.csv.xz")
+vroom_write(vcov_df_q50, file = "Outputs/Tables/adding_cases/vcov_gnm_q50_for_all.csv.xz")
 
 ## vcov q95
 vcov_df_q95<-vcov_fun(vcov_q95)
-vroom_write(vcov_df_q95, file = "Outputs/Tables/New_run/vcov_gnm_q95_for_all.csv.xz")
+vroom_write(vcov_df_q95, file = "Outputs/Tables/adding_cases/vcov_gnm_q95_for_all.csv.xz")
 
 
 #
