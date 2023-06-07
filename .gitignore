@@ -39,3 +39,13 @@ Data/dengue_rh2m_muni_2010_2019.csv.xz
 Data/dengue_t2m_stratas_2010_2019.csv.xz
 Data/dengue_rh2m_stratas_2010_2019.csv.xz
 Data/rh2m_muni_2010_2019.csv.xz
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

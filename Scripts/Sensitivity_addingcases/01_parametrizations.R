@@ -37,16 +37,32 @@ dengue_t2m <-
 dengue_t2m[,  keep:=sum(Cases)>0, by=month_city_dow]
 
 ## Cases dataset with moving averages
-dengue_confirmed<-vroom("Data/dengue_cases_confirmed_muni_2000_2020_complete.csv.xz")
+dengue_confirmed<-vroom("Data/dengue_cases_confirmed_muni_2000_2020_complete.csv.xz") |> 
+  rename(date = date_symptoms)
 
 ## Building the moving averages to run into gnm
-dengue_confirmed<-
-  dengue_confirmed |> 
-  arrange(date_symptoms) |> 
+## All dates for the whole period
+date_series <-
+  tibble(
+    date = seq.Date(dmy('01-01-2010'), dmy('31-12-2019'), by = 'day')
+  )
+
+## All municipalities codes
+code_muni<-unique(dengue_t2m$code_muni)
+
+date_series<-expand_grid(date_series, code_muni)
+
+dengue_confirmed<-date_series |> 
+  left_join(dengue_confirmed) |> 
+  mutate(confirmed = replace_na(confirmed, 0))
+  
+dengue_confirmed<-dengue_confirmed  |> 
+  arrange(date) |>
   group_by(code_muni) |> 
   mutate(cases_confirmed_7ma  = zoo::rollmean(confirmed, k = 7, fill = NA, align = 'right'),
          cases_confirmed_14ma = zoo::rollmean(confirmed, k = 14, fill = NA, align = 'right'))
 
+## Confirmar se tem todas as possíeveis para evitar bias na média móvel
 # States
 dengue_t2m<-dengue_t2m |> 
   rename(code_stacked = code_state)
