@@ -32,6 +32,28 @@ for (i in 1:5) {
     filter(abbrev_state %in% region_filter$abbrev_state) |> 
       arrange(code_muni, date) |>
       data.table::as.data.table()
+  
+ data_region_means<-data_region |> 
+    summarise(tmin = min(temp_mean),
+              tmax = max(temp_mean)) %>%
+    ungroup() %>%
+    summarise(tmin = mean(tmin),
+              tmax = mean(tmax))
+  
+  knotsper<-equalknots(data_region_means$tmin:data_region_means$tmax, nk = 2)
+  varfun<-"ns"
+  
+  nlag<-21
+  xlag<-0:nlag
+  lagnk <- 3
+  klag<-logknots(nlag,lagnk)
+  lagfun<-"ns"
+  #
+  argvar<-list(fun=varfun, 
+               Bound = range(data_region$temp_mean, na.rm = T), 
+               knots=knotsper, int=F)
+  arglag<-list(fun=lagfun, 
+               knots=klag,int=T)
 
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   

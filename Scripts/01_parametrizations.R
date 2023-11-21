@@ -86,6 +86,7 @@ states<-names_stacked<-c("RO","AC","AM","RR","PA","AP","TO", ## Abbreviation for
 # klag<-logknots(nlag,lagnk)
 # lagfun<-"ns"
 # 
+## To-Do: Add boundary knots on the argvar and arglag, to avoid CI explosion
 # argvar<-list(fun=varfun, knots=knotsper, int=F)
 # arglag<-list(fun=lagfun, knots=klag,int=T)
 # tpred<-quantile(dengue_t2m$temp_mean, probs=(1:99)/100, na.rm=T)

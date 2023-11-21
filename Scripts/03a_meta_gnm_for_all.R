@@ -79,32 +79,26 @@ lagnk <- 3
 klag<-logknots(nlag,lagnk)
 lagfun<-"ns"
 #
-argvar<-list(fun=varfun, knots=knotsper, int=F)
-arglag<-list(fun=lagfun, knots=klag,int=T)
+argvar<-list(fun=varfun, 
+             Bound = range(dengue_t2m$temp_mean, na.rm = T), 
+             knots=knotsper, int=F)
+arglag<-list(fun=lagfun, 
+             knots=klag,int=T)
 tpred<-quantile(dengue_t2m$temp_mean, probs=(1:99)/100, na.rm=T)
-# range_cb<-c(min(dengue_t2m$temp_mean):max(dengue_t2m$temp_mean))
-# cb <- crossbasis(tpred, lag=nlag, argvar=argvar, arglag=arglag)
-# bvar <- do.call("onebasis",c(list(x=tpred),attr(cb,"argvar")))
-# blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
 
-dengue_t2m <- dengue_t2m %>% arrange(code_muni, date)
-
-cb <- crossbasis(dengue_t2m$temp_mean, lag=nlag, argvar=argvar, arglag=arglag, group = dengue_t2m$code_muni)
-
-bvar <- do.call("onebasis",c(list(x=dengue_t2m$temp_mean),attr(cb,"argvar")))
+cb <- crossbasis(tpred, lag=nlag, argvar=argvar, arglag=arglag)
+bvar <- do.call("onebasis",c(list(x=tpred),attr(cb,"argvar")))
 blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
 
-
-
 ##  non-cen
-Metapred<-crosspred(basis=bvar,
+Metapred<-crosspred(basis=bvar_brega,
                     coef=coef(mv),
                     vcov=vcov(mv),
                     at=tpred,
                     model.link="log")  
 plot(Metapred)
 ## cen 
-Metapred_cen<-crosspred(basis=bvar,
+Metapred_cen<-crosspred(basis=bvar_brega,
                         coef=coef(mv_cen),
                         vcov=vcov(mv_cen),
                         at=tpred,
@@ -115,11 +109,11 @@ plot(Metapred_cen)
 ##  non-cen
 (metaMHT<-Metapred$predvar[which.min(Metapred$allfit)])  
 #MHT Remember this to be used on the next script, 03b_meta_lag_gnm_for_all.R
-Metapred<-crosspred(basis=bvar,
+Metapred<-crosspred(basis=bvar_brega,
                     coef=coef(mv),
                     vcov=vcov(mv),
                     cen=metaMHT,
-                    at=tpred,
+                    at=seq(0,34,0.1),
                     model.link="log")  #centering
 plot(Metapred)
 ## cen 
