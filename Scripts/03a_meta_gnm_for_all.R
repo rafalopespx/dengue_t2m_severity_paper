@@ -91,14 +91,14 @@ bvar <- do.call("onebasis",c(list(x=tpred),attr(cb,"argvar")))
 blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
 
 ##  non-cen
-Metapred<-crosspred(basis=bvar_brega,
+Metapred<-crosspred(basis=bvar,
                     coef=coef(mv),
                     vcov=vcov(mv),
                     at=tpred,
                     model.link="log")  
 plot(Metapred)
 ## cen 
-Metapred_cen<-crosspred(basis=bvar_brega,
+Metapred_cen<-crosspred(basis=bvar,
                         coef=coef(mv_cen),
                         vcov=vcov(mv_cen),
                         at=tpred,
@@ -109,11 +109,11 @@ plot(Metapred_cen)
 ##  non-cen
 (metaMHT<-Metapred$predvar[which.min(Metapred$allfit)])  
 #MHT Remember this to be used on the next script, 03b_meta_lag_gnm_for_all.R
-Metapred<-crosspred(basis=bvar_brega,
+Metapred<-crosspred(basis=bvar,
                     coef=coef(mv),
                     vcov=vcov(mv),
                     cen=metaMHT,
-                    at=seq(0,34,0.1),
+                    at=tpred,
                     model.link="log")  #centering
 plot(Metapred)
 ## cen 
