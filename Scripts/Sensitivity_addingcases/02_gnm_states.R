@@ -54,6 +54,7 @@ for (i in 1:stacked_levels){
     mutate(cases_confirmed_7ma  = zoo::rollmean(confirmed, k = 7, fill = NA, align = 'right'),
            cases_confirmed_14ma = zoo::rollmean(confirmed, k = 14, fill = NA, align = 'right'))
   
+  data <- data %>% ungroup()
   ## Taking out strata with no Cases, to avoid bias in gnm
   data <- data.table::as.data.table(data)
   data <- data[,  keep:=sum(Cases)>0, by=month_city_dow]
