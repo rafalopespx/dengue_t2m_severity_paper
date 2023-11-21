@@ -82,10 +82,19 @@ lagfun<-"ns"
 argvar<-list(fun=varfun, knots=knotsper, int=F)
 arglag<-list(fun=lagfun, knots=klag,int=T)
 tpred<-quantile(dengue_t2m$temp_mean, probs=(1:99)/100, na.rm=T)
-range_cb<-c(min(dengue_t2m$temp_mean):max(dengue_t2m$temp_mean))
-cb <- crossbasis(tpred, lag=nlag, argvar=argvar, arglag=arglag)
-bvar <- do.call("onebasis",c(list(x=tpred),attr(cb,"argvar")))
+# range_cb<-c(min(dengue_t2m$temp_mean):max(dengue_t2m$temp_mean))
+# cb <- crossbasis(tpred, lag=nlag, argvar=argvar, arglag=arglag)
+# bvar <- do.call("onebasis",c(list(x=tpred),attr(cb,"argvar")))
+# blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
+
+dengue_t2m <- dengue_t2m %>% arrange(code_muni, date)
+
+cb <- crossbasis(dengue_t2m$temp_mean, lag=nlag, argvar=argvar, arglag=arglag, group = dengue_t2m$code_muni)
+
+bvar <- do.call("onebasis",c(list(x=dengue_t2m$temp_mean),attr(cb,"argvar")))
 blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
+
+
 
 ##  non-cen
 Metapred<-crosspred(basis=bvar,
