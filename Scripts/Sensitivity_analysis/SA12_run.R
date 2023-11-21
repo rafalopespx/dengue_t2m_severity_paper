@@ -4,7 +4,7 @@ gc()
 ## SA1, 3 knots equally spaced on dose-response structure; 3 knots equally spaced on the log-scale for lag-response
 # s=1
 ## SA2, 2 knots equally spaced on dose-response structure; 4 knots on 1st, 2nd, 7th and 14th days for lag-response
-s=2
+s=1
 
 ### Loading packages
 if(s==1){
@@ -47,8 +47,10 @@ mht.gnm<-c()
 
 ## Looping for GNM Stacked analysis
 for (i in 1:stacked_levels){
-  data<-dengue_t2m %>% 
-    filter(code_stacked == codes_stacked[i])
+  data<-dengue_t2m |> 
+    filter(code_stacked == codes_stacked[i])|>
+    arrange(code_muni, date) |>
+    data.table::as.data.table()
   
   if(s==1){
     knotsper<-equalknots(data$temp_mean, nk = 3) ## 
@@ -84,6 +86,10 @@ for (i in 1:stacked_levels){
     cb <- crossbasis(data$temp_mean, lag=nlag, argvar=argvar, arglag=arglag)
   }
   
+  ## Taking out strata with no Cases, to avoid bias in gnm
+  data[,  keep:=sum(Cases)>0, by=month_city_dow]
+  
+  
   
   ## DLNM
   nyear<-length(unique(data$year))
@@ -93,7 +99,8 @@ for (i in 1:stacked_levels){
                  eliminate = month_city_dow, 
                  data=data, 
                  family = quasipoisson, 
-                 na.action="na.exclude")
+                 na.action="na.exclude", 
+                 subset = keep)
   
   ## Cross-pred
   pred.gnm<-crosspred(cb,model.gnm, at=tpred_state) 
@@ -146,10 +153,10 @@ RR_overall_list <- RR_overall_list %>%
   bind_rows(.id = "abbrev_state")
 
 # Saving RR, overall and lags for each state
-vroom_write(RRVal_lag_list, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(RRVal_lag_list, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                           SA,
                                           "RRVal_lag_gnm.csv.xz"))
-vroom_write(RR_overall_list, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(RR_overall_list, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                            SA,
                                            "RR_overall_gnm.csv.xz"))
 
@@ -161,7 +168,7 @@ coef_df<-coef %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(coef_df, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                    SA, 
                                    "coefficients_gnm_for_all.csv.xz"))
 ## Centered
@@ -170,7 +177,7 @@ coef_df_cen<-coef_cen %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_cen, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(coef_df_cen, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                        SA, 
                                        "coefficients_gnm_cen_for_all.csv.xz"))
 
@@ -180,7 +187,7 @@ coef_df_q50<-coef_q50 %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_q50, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(coef_df_q50, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                        SA, 
                                        "coefficients_gnm_q50_for_all.csv.xz"))
 
@@ -190,7 +197,7 @@ coef_df_q95<-coef_q95 %>%
   rownames_to_column(var = "abbrev_state") %>% 
   setNames(c("abbrev_state", "b1", "b2", "b3"))
 
-vroom_write(coef_df_q95, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(coef_df_q95, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                        SA, 
                                        "coefficients_gnm_q95_for_all.csv.xz"))
 
@@ -207,25 +214,25 @@ vcov_fun<-function(x){
 }
 ## Non-centered
 vcov_df<-vcov_fun(vcov)
-vroom_write(vcov_df, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(vcov_df, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                    SA, 
                                    "vcov_gnm_for_all.csv.xz"))
 
 ## Centered
 vcov_df_cen<-vcov_fun(vcov_cen)
-vroom_write(vcov_df_cen, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(vcov_df_cen, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                        SA, 
                                        "vcov_gnm_cen_for_all.csv.xz"))
 
 ## vcov q50
 vcov_df_q50<-vcov_fun(vcov_q50)
-vroom_write(vcov_df_q50, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(vcov_df_q50, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                        SA, 
                                        "vcov_gnm_q50_for_all.csv.xz"))
 
 ## vcov q95
 vcov_df_q95<-vcov_fun(vcov_q95)
-vroom_write(vcov_df_q95, file = paste0("Outputs/Tables/Sensitivity_analysis/", 
+vroom_write(vcov_df_q95, file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/", 
                                        SA, 
                                        "vcov_gnm_q95_for_all.csv.xz"))
 

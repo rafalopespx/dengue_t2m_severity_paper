@@ -62,6 +62,31 @@ summary(mv_cen)
 
 ## Predictions from the meta-analysis
 # 3.1. Prediction overall without centering
+dengue_t2m_means<-dengue_t2m %>%
+  group_by(abbrev_state) %>%
+  summarise(tmin = min(temp_mean),
+            tmax = max(temp_mean)) %>%
+  ungroup() %>%
+  summarise(tmin = mean(tmin),
+            tmax = mean(tmax))
+
+knotsper<-equalknots(dengue_t2m_means$tmin:dengue_t2m_means$tmax, nk = 2)
+varfun<-"ns"
+
+nlag<-21
+xlag<-0:nlag
+lagnk <- 3
+klag<-logknots(nlag,lagnk)
+lagfun<-"ns"
+#
+argvar<-list(fun=varfun, knots=knotsper, int=F)
+arglag<-list(fun=lagfun, knots=klag,int=T)
+tpred<-quantile(dengue_t2m$temp_mean, probs=(1:99)/100, na.rm=T)
+range_cb<-c(min(dengue_t2m$temp_mean):max(dengue_t2m$temp_mean))
+cb <- crossbasis(tpred, lag=nlag, argvar=argvar, arglag=arglag)
+bvar <- do.call("onebasis",c(list(x=tpred),attr(cb,"argvar")))
+blag <- do.call("onebasis",c(list(x=xlag),attr(cb,"arglag")))
+
 ##  non-cen
 Metapred<-crosspred(basis=bvar,
                     coef=coef(mv),
