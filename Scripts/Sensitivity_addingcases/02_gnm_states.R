@@ -47,10 +47,17 @@ for (i in 1:stacked_levels){
   
   ## Data final
   data<-data |> 
-    left_join(data_ma)
+    left_join(data_ma)|> 
+    mutate(confirmed = replace_na(confirmed, 0))|> 
+    arrange(date) |>
+    group_by(code_muni) |>
+    mutate(cases_confirmed_7ma  = zoo::rollmean(confirmed, k = 7, fill = NA, align = 'right'),
+           cases_confirmed_14ma = zoo::rollmean(confirmed, k = 14, fill = NA, align = 'right'))
   
   ## Taking out strata with no Cases, to avoid bias in gnm
-  data[,  keep:=sum(Cases)>0, by=month_city_dow]
+  data <- data.table::as.data.table(data)
+  data <- data[,  keep:=sum(Cases)>0, by=month_city_dow]
+  # data <- data[keep!=0]
   
   knotsper<-equalknots(data$temp_mean, nk = 2) ## 
   varfun<-"ns"
@@ -69,14 +76,14 @@ for (i in 1:stacked_levels){
   
   ## DLNM
   nyear<-length(unique(data$year))
-  formula.gnm<-"Cases ~ cb+ns(date, df=7*nyear) + cases_confirmed_7ma"
+  formula.gnm<-"Cases ~ cb + ns(date, df=7*nyear) + cases_confirmed_7ma"
   
   model.gnm<-tryCatch(gnm(as.formula(formula.gnm), 
                  eliminate = month_city_dow, 
                  data=data, 
                  # offset = log(cases_confirmed_7ma),
                  family = quasipoisson(link = "log"), 
-                 na.action="na.exclude", 
+                 na.action="na.exclude",
                  subset = keep), 
            error = function(err) NULL)
   
