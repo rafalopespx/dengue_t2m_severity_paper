@@ -72,11 +72,11 @@ source("functions/functions.R")
 quantiles_temp <- vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
 # Whole Country Meta-analysis Data
 ## Overall Meta 
-res_state_absolute<-vroom("Outputs/Tables/meta_gnm_overall_for_all.csv.xz")
+res_state_absolute<-vroom("Outputs/Tables/New_run/meta_gnm_overall_for_all.csv.xz")
 ## RR Meta
-RR_list_absolute<-vroom("Outputs/Tables/meta_gnm_RR_overall_for_all.csv.xz")
+RR_list_absolute<-vroom("Outputs/Tables/New_run/meta_gnm_RR_overall_for_all.csv.xz")
 ## RR over lag Meta
-RR_list_lag<-vroom("Outputs/Tables/meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag<-vroom("Outputs/Tables/New_run/meta_RR_gnm_lags_for_all.csv.xz")
 
 # Descriptive table for temperature
 
@@ -111,7 +111,7 @@ vroom_write(table_quantiles_temp,
 ## Regions Names
 regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 ## Overall
-res_region_absolute<-vroom("Outputs/Tables/meta_gnm_overall_all_regions.csv.xz")
+res_region_absolute<-vroom("Outputs/Tables/New_run/meta_gnm_overall_all_regions.csv.xz")
 
 MHT_per_region_absolute<-res_region_absolute %>% 
   filter(RR == 1)
@@ -216,6 +216,6 @@ table_rr_final_absolute <-
 table_rr_final_absolute
 
 vroom_write(table_rr_final_absolute,
-            file ="Outputs/Tables/table_1_mht_RR_absolute.csv")
+            file ="Outputs/Tables/New_run/table_1_mht_RR_absolute.csv")
 
 #
