@@ -11,17 +11,17 @@ if(!require(patchwork)){install.packages("patchwork"); library(patchwork)}
 
 ## Relative Scale
 ## SA1
-res_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_for_all.csv.xz")
+res_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_for_all.csv.xz")
 ## RR Meta
-RR_list_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_for_all.csv.xz")
+RR_list_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_for_all.csv.xz")
 ## RR over lag Meta
-RR_list_lag_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_RR_gnm_lags_for_all.csv.xz")
 ## SA2
-res_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_for_all.csv.xz")
+res_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_gnm_overall_for_all.csv.xz")
 ## RR Meta
-RR_list_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_for_all.csv.xz")
+RR_list_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_gnm_overall_for_all.csv.xz")
 ## RR over lag Meta
-RR_list_lag_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_RR_gnm_lags_for_all.csv.xz")
 
 ## Dose-response Plot Meta
 ## SA1
@@ -54,7 +54,7 @@ plot_overall_sa1<-res_sa1 %>%
 plot_overall_sa1
 
 ggsave(plot = plot_overall_sa1, 
-       filename = "Outputs/Plots/Sensitivity_analysis/SA1_plot_overall_gnm_meta.png", 
+       filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA1_plot_overall_gnm_meta.png", 
        width = 9, 
        height = 7, 
        dpi = 300)
@@ -89,7 +89,7 @@ plot_overall_sa2<-res_sa2 %>%
 plot_overall_sa2
 
 ggsave(plot = plot_overall_sa2, 
-       filename = "Outputs/Plots/Sensitivity_analysis/SA2_plot_overall_gnm_meta.png", 
+       filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA2_plot_overall_gnm_meta.png", 
        width = 9, 
        height = 7, 
        dpi = 300)
@@ -117,6 +117,7 @@ plot_p50_sa1<-RR_list_lag_sa1 %>%
   theme_minimal()+
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), axis.title.x = element_blank())
 plot_p50_sa1
+
 ## SA2
 ylab<-RR_list_lag_sa2 %>% 
   filter(percentil == 0.50)
@@ -138,7 +139,6 @@ plot_p50_sa2<-RR_list_lag_sa2 %>%
   theme_minimal()+
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), axis.title.x = element_blank())
 plot_p50_sa2
-
 
 ## Plot effects over P0.95
 ## SA1
@@ -188,14 +188,15 @@ plot_p95_sa2
 ## SA1
 plot_lag_sa1<-gridExtra::grid.arrange(plot_p50_sa1, plot_p95_sa1)
 
-ggsave(filename = "Outputs/Plots/Sensitivity_analysis/SA1_percentil_effects.png", 
+ggsave(filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA1_percentil_effects.png", 
        plot = plot_lag_sa1, 
        width = 9, 
        height = 7, dpi = 300)
+
 ## SA2
 plot_lag_sa2<-gridExtra::grid.arrange(plot_p50_sa2, plot_p95_sa2)
 
-ggsave(filename = "Outputs/Plots/Sensitivity_analysis/SA2_percentil_effects.png", 
+ggsave(filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA2_percentil_effects.png", 
        plot = plot_lag_sa2, 
        width = 9, 
        height = 7, dpi = 300)
@@ -209,7 +210,7 @@ plot_figure1_sa1<-(plot_overall_sa1 | (plot_p50_sa1 / plot_p95_sa1))+
     tag_levels = c("A", "B", "C"), theme = theme_minimal())
 plot_figure1_sa1
 
-ggsave(filename = "Outputs/Plots/Sensitivity_analysis/SA1_figure_1_meta_analysis.png", 
+ggsave(filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA1_figure_1_meta_analysis.png", 
        plot = plot_figure1_sa1, 
        width = 9, 
        height = 7, dpi = 300)
@@ -222,7 +223,7 @@ plot_figure1_sa2<-(plot_overall_sa2 | (plot_p50_sa2 / plot_p95_sa2))+
     tag_levels = c("A", "B", "C"), theme = theme_minimal())
 plot_figure1_sa2
 
-ggsave(filename = "Outputs/Plots/Sensitivity_analysis/SA2_figure_1_meta_analysis.png", 
+ggsave(filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA2_figure_1_meta_analysis.png", 
        plot = plot_figure1_sa2, 
        width = 9, 
        height = 7, dpi = 300)

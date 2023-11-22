@@ -11,21 +11,21 @@ percentile_vector<-c(0.50, 0.95)
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## Coef and Vcov for states
 ## SA1
-coef_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_coefficients_gnm_q50_for_all.csv.xz")
-vcov_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_vcov_gnm_q50_for_all.csv.xz")
+coef_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_coefficients_gnm_q50_for_all.csv.xz")
+vcov_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_vcov_gnm_q50_for_all.csv.xz")
 coef_list_sa1<-list(coef_q50_sa1, coef_q95_sa1)
 ## SA2
-coef_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_coefficients_gnm_q50_for_all.csv.xz")
-vcov_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_vcov_gnm_q50_for_all.csv.xz")
+coef_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_coefficients_gnm_q50_for_all.csv.xz")
+vcov_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_vcov_gnm_q50_for_all.csv.xz")
 coef_list_sa2<-list(coef_q50_sa2, coef_q95_sa2)
 ## Coef and Vcov for states
 ## SA1
-coef_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_coefficients_gnm_q95_for_all.csv.xz")
-vcov_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_vcov_gnm_q95_for_all.csv.xz")
+coef_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_coefficients_gnm_q95_for_all.csv.xz")
+vcov_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_vcov_gnm_q95_for_all.csv.xz")
 vcov_list_sa1<-list(vcov_q50_sa1, vcov_q95_sa1)
 ## SA2
-coef_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_coefficients_gnm_q95_for_all.csv.xz")
-vcov_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_vcov_gnm_q95_for_all.csv.xz")
+coef_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_coefficients_gnm_q95_for_all.csv.xz")
+vcov_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_vcov_gnm_q95_for_all.csv.xz")
 vcov_list_sa2<-list(vcov_q50_sa2, vcov_q95_sa2)
 
 # Meta by Region Variables
@@ -144,14 +144,14 @@ for (j in 1:length(percentile_vector)) {
     # Saving RR for the i-th region in the j-th percentile
     ## SA1
     vroom_write(RR_list_sa1[[j]][[i]], 
-                file = paste0("Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_region_", 
+                file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_RR_gnm_lags_region_", 
                               regions_names[i],
                               "_percentile_", 
                               percentile_vector[j], 
                               ".csv.xz"))
     ## SA2
     vroom_write(RR_list_sa2[[j]][[i]], 
-                file = paste0("Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_region_", 
+                file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_RR_gnm_lags_region_", 
                               regions_names[i],
                               "_percentile_", 
                               percentile_vector[j], 
@@ -167,10 +167,10 @@ for (j in 1:length(percentile_vector)) {
   
   # Saving RR for all regions in the j-th percentile
   vroom_write(RR_list_sa1[[j]], 
-              file = paste0("Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_all_regions_percentile_", 
+              file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_RR_gnm_lags_all_regions_percentile_", 
                             percentile_vector[j], ".csv.xz"))
   vroom_write(RR_list_sa2[[j]], 
-              file = paste0("Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_all_regions_percentile_", 
+              file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_RR_gnm_lags_all_regions_percentile_", 
                             percentile_vector[j], ".csv.xz"))
   
   cat("\t","Meta-analysis on", percentile_vector[j], "percentile over all Regions finished!", "\t")
@@ -186,8 +186,8 @@ RR_list_sa2<-RR_list_sa2 %>%
 
 # Salving the Metanalysis RR list
 vroom_write(RR_list_sa1, 
-            file = "Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
+            file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
 vroom_write(RR_list_sa2, 
-            file = "Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
+            file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
 
 #

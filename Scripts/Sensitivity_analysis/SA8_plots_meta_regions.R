@@ -14,13 +14,13 @@ if(!require(patchwork)){install.packages("patchwork"); library(patchwork)}
 regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 
 ### Overall
-res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_all_regions.csv.xz")
-res_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_all_regions.csv.xz")
+res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_all_regions.csv.xz")
+res_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_gnm_overall_all_regions.csv.xz")
 ### RR list for lags by percentile
-RR_lag_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
-RR_lag_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
+RR_lag_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
+RR_lag_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_RR_gnm_lags_all_regions_all_percentile.csv.xz")
 
-## Dose-respostas by Region
+## Dose-response by Region
 ## SA1
 metaMHT_region_sa1<-res_region_sa1 %>% 
   filter(RR == 1) %>% 
@@ -54,7 +54,7 @@ plot_overall_region_sa1<-res_region_sa1 %>%
 plot_overall_region_sa1
 
 ggsave(plot = plot_overall_region_sa1,
-       filename = paste0("Outputs/Plots/Sensitivity_analysis/SA1_plot_overall_regions_all_regions_gnm_meta.png"),
+       filename = paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA1_plot_overall_regions_all_regions_gnm_meta.png"),
        width = 9,
        height = 7,
        dpi = 300)
@@ -88,11 +88,10 @@ plot_overall_region_sa2<-res_region_sa2 %>%
        title="Temperature and Dengue Hospitalization",
        subtitle=paste0("Meta by Regions, 2010-2019"))+
   facet_wrap(region~., scales = "free")
-
 plot_overall_region_sa2
 
 ggsave(plot = plot_overall_region_sa2,
-       filename = paste0("Outputs/Plots/Sensitivity_analysis/SA2_plot_overall_regions_all_regions_gnm_meta.png"),
+       filename = paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA2_plot_overall_regions_all_regions_gnm_meta.png"),
        width = 9,
        height = 7,
        dpi = 300)
@@ -194,12 +193,12 @@ plot_p95_sa2
 plot_percent_sa1<-gridExtra::grid.arrange(plot_p50_sa1, plot_p95_sa1)
 plot_percent_sa2<-gridExtra::grid.arrange(plot_p50_sa2, plot_p95_sa2)
 
-ggsave(filename = "Outputs/Plots/Sensitivity_analysis/SA1_percentil_effects_regions.png", 
+ggsave(filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA1_percentil_effects_regions.png", 
        plot = plot_percent_sa1, 
        width = 9, 
        height = 7, dpi = 300)
 
-ggsave(filename = "Outputs/Plots/Sensitivity_analysis/SA2_percentil_effects_regions.png", 
+ggsave(filename = "Outputs/Plots/Sensitivity_analysis/Newrun/SA2_percentil_effects_regions.png", 
        plot = plot_percent_sa2, 
        width = 9, 
        height = 7, dpi = 300)
@@ -388,7 +387,7 @@ for (i in 1:5) {
                     tag_levels = c("A", "B", "C"), 
                     theme = theme_minimal())
   
-  ggsave(filename = paste0("Outputs/Plots/Sensitivity_analysis/SA1_figure_SM_", regions_names[i], "_region_meta_analysis.png"),
+  ggsave(filename = paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA1_figure_SM_", regions_names[i], "_region_meta_analysis.png"),
          plot = plot_figure_region_sa1[[i]],
          width = 9,
          height = 7, dpi = 300)
@@ -399,12 +398,10 @@ for (i in 1:5) {
                     tag_levels = c("A", "B", "C"), 
                     theme = theme_minimal())
   
-  ggsave(filename = paste0("Outputs/Plots/Sensitivity_analysis/SA2_figure_SM_", regions_names[i], "_region_meta_analysis.png"),
+  ggsave(filename = paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA2_figure_SM_", regions_names[i], "_region_meta_analysis.png"),
          plot = plot_figure_region_sa2[[i]],
          width = 9,
          height = 7, dpi = 300)
-  
-  
 }
 
 

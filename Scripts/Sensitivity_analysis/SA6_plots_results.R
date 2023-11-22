@@ -11,11 +11,11 @@ if(!require(geofacet)){install.packages("geofacet"); library(geofacet)}
 # Loading databases
 ## Lag and Overall
 ## SA1
-RRVal_lag_list_sa1 <- vroom("Outputs/Tables/Sensitivity_analysis/SA1_RRVal_lag_gnm.csv.xz")
-RR_overall_list_sa1 <- vroom("Outputs/Tables/Sensitivity_analysis/SA1_RR_overall_gnm.csv.xz")
+RRVal_lag_list_sa1 <- vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_RRVal_lag_gnm.csv.xz")
+RR_overall_list_sa1 <- vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_RR_overall_gnm.csv.xz")
 ## SA2
-RRVal_lag_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/SA2_RRVal_lag_gnm.csv.xz")
-RR_overall_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/SA2_RR_overall_gnm.csv.xz")
+RRVal_lag_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_RRVal_lag_gnm.csv.xz")
+RR_overall_list_sa2 <- vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_RR_overall_gnm.csv.xz")
 
 ## Quantiles t2m
 quantiles_t2m<-vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
@@ -120,12 +120,12 @@ for (i in 1:stacked_levels) {
   
   # PAY ATTENTION TO THE NAME OF FILES YOU ARE SAVING, 
   # MAKE SURE IT IS THE CORRECT, TO NOT SUBSTITUTE FOR AN EXISTING ONE!
-  ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
+  ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA1_gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
          plot = plot_final[[i]]$sa1,
          width = 9,
          height = 7,
          dpi = 300)
-  ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
+  ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA2_gnm_", names_stacked_plot[i], "_state_overall_effects.png"),
          plot = plot_final[[i]]$sa2,
          width = 9,
          height = 7,
@@ -140,12 +140,12 @@ RR_95_05_overall<-RR_95_05_overall %>%
 ## sa1
 RR_95_05_overall_sa1<-RR_95_05_overall$sa1
 
-vroom_write(file = "Outputs/Tables/Sensitivity_analysis/SA1_RR_95_05_t2m_overall.csv.xz",
+vroom_write(file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA1_RR_95_05_t2m_overall.csv.xz",
             RR_95_05_overall_sa1)
 ## sa2
 RR_95_05_overall_sa2<-RR_95_05_overall$sa2
 
-vroom_write(file = "Outputs/Tables/Sensitivity_analysis/SA2_RR_95_05_t2m_overall.csv.xz", 
+vroom_write(file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA2_RR_95_05_t2m_overall.csv.xz", 
             RR_95_05_overall_sa2)
 
 ## Overall Brasil Plot
@@ -182,7 +182,7 @@ plot_overall_state_sa1<-RR_overall_list_sa1 %>%
 
 plot_overall_state_sa1
 
-ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_all_state_overall_effects.png"),
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA1_gnm_all_state_overall_effects.png"),
        plot = plot_overall_state_sa1,
        width = 9,
        height = 7,
@@ -212,7 +212,7 @@ plot_overall_state_sa2<-RR_overall_list_sa2 %>%
 
 plot_overall_state_sa2
 
-ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_all_state_overall_effects.png"),
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA2_gnm_all_state_overall_effects.png"),
        plot = plot_overall_state_sa2,
        width = 9,
        height = 7,
@@ -241,7 +241,7 @@ plot_rr_lag_5th_sa1<-cold_5th_val_lag %>%
   theme_minimal()
 plot_rr_lag_5th_sa1
 
-ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_all_state_on_50th_effects.png"),
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA1_gnm_all_state_on_50th_effects.png"),
        plot = plot_rr_lag_5th_sa1,
        width = 9,
        height = 7,
@@ -270,7 +270,7 @@ plot_rr_lag_5th_sa2<-cold_5th_val_lag %>%
 
 plot_rr_lag_5th_sa2
 
-ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_all_state_on_50th_effects.png"),
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA2_gnm_all_state_on_50th_effects.png"),
        plot = plot_rr_lag_5th_sa2,
        width = 9,
        height = 7,
@@ -298,7 +298,7 @@ plot_rr_lag_95th_sa1<-heat_95th_val_lag %>%
   theme_minimal()
 plot_rr_lag_95th_sa1
 
-ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA1_gnm_scale_all_state_heat_95th_effects.png"),
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA1_gnm_scale_all_state_heat_95th_effects.png"),
        plot = plot_rr_lag_95th_sa1,
        width = 9,
        height = 7,
@@ -327,7 +327,7 @@ plot_rr_lag_95th_sa2<-heat_95th_val_lag %>%
 
 plot_rr_lag_95th_sa2
 
-ggsave(paste0("Outputs/Plots/Sensitivity_analysis/SA2_gnm_scale_all_state_heat_95th_effects.png"),
+ggsave(paste0("Outputs/Plots/Sensitivity_analysis/Newrun/SA2_gnm_scale_all_state_heat_95th_effects.png"),
        plot = plot_rr_lag_95th_sa2,
        width = 9,
        height = 7,

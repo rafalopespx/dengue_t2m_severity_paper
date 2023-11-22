@@ -16,11 +16,11 @@ source("functions/functions.R")
 quantiles_temp <- vroom("Outputs/Tables/quantiles_temp_mean.csv.xz")
 # Whole Country Meta-analysis Data
 ## Overall Meta 
-res_state_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_for_all.csv.xz")
-res_state_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_for_all.csv.xz")
+res_state_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_for_all.csv.xz")
+res_state_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_gnm_overall_for_all.csv.xz")
 ## RR over lag Meta
-RR_list_lag_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_for_all.csv.xz")
-RR_list_lag_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_RR_gnm_lags_for_all.csv.xz")
+RR_list_lag_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_RR_gnm_lags_for_all.csv.xz")
 
 # Descriptive table for temperature
 table_quantiles_temp <- quantiles_temp %>%
@@ -48,14 +48,14 @@ table_quantiles_temp <- quantiles_temp %>%
   setNames(c("State Region Brazil", "Minimum", "5th", "25th", "50th", "75th", "95th", "Maximum"))
 
 vroom_write(table_quantiles_temp,
-            file ="Outputs/Tables/table_s1_t2m_descriptive.csv")
+            file ="Outputs/Tables/Sensitivity_analysis/Newrun/table_s1_t2m_descriptive.csv")
 
 # Per Region Meta-analysis Data
 ## Regions Names
 regions_names<-c("North", "Northeast", "Center-West", "Southeast", "South")
 ## Overall
-res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_all_regions.csv.xz")
-res_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_all_regions.csv.xz")
+res_region_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_all_regions.csv.xz")
+res_region_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_gnm_overall_all_regions.csv.xz")
 
 MHT_per_region_sa1<-res_region_sa1 %>% 
   filter(RR == 1)
@@ -256,8 +256,8 @@ table_rr_final_sa2 <-
 table_rr_final_sa2
 
 vroom_write(table_rr_final_sa1,
-            file ="Outputs/Tables/Sensitivity_analysis/SA1_table_1_mht_RR_absolute.csv")
+            file ="Outputs/Tables/Sensitivity_analysis/Newrun/SA1_table_1_mht_RR_absolute.csv")
 
 vroom_write(table_rr_final_sa2,
-            file ="Outputs/Tables/Sensitivity_analysis/SA2_table_1_mht_RR_absolute.csv")
+            file ="Outputs/Tables/Sensitivity_analysis/Newrun/SA2_table_1_mht_RR_absolute.csv")
 #
