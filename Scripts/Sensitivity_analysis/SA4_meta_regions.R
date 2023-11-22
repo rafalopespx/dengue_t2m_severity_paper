@@ -2,16 +2,16 @@ rm(list=ls())
 gc()
 
 source("Scripts/00_database_load.R")
-source("Scripts/Sensitivity_analysis/sa1&2_parametrization.R")
+# source("Scripts/Sensitivity_analysis/sa1&2_parametrization.R")
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## Coef and Vcov SA1
-coef_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_coefficients_gnm_for_all.csv.xz")
-vcov_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_vcov_gnm_for_all.csv.xz")
+coef_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_coefficients_gnm_for_all.csv.xz")
+vcov_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_vcov_gnm_for_all.csv.xz")
 
 ## Coef and Vcov SA2
-coef_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_coefficients_gnm_for_all.csv.xz")
-vcov_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_vcov_gnm_for_all.csv.xz")
+coef_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_coefficients_gnm_for_all.csv.xz")
+vcov_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_vcov_gnm_for_all.csv.xz")
 
 source("functions/functions.R")
 regions<-names_stacked 
@@ -35,17 +35,83 @@ for (i in 1:5) {
   data_region<-dengue_t2m %>% 
     filter(abbrev_state %in% region_filter$abbrev_state)
   
+  data_region_means <- data_region |> 
+    group_by(abbrev_state) %>%
+    summarise(tmin = min(temp_mean),
+              tmax = max(temp_mean)) %>%
+    ungroup() %>%
+    summarise(tmin = mean(tmin),
+              tmax = mean(tmax))
+  
   tpred_region<-quantile(data_region$temp_mean, probs=(1:99)/100, na.rm=T)
   
   ## SA1 Crossbasis parametrization
-  knotsper_sa1<-equalknots(data_region$temp_mean, nk = 3)
-  cb_sa1 <- crossbasis(data_region$temp_mean, lag=nlag_sa1, argvar=argvar_sa1, arglag=arglag_sa1)
-  bvar_sa1 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa1,"argvar")))
+  ## SA 1, 3 knots, equally distant
+  knotsper_sa1<-equalknots(data_region_means$tmin:data_region_means$tmax, 
+                           nk = 3)
+  varfun_sa1<-"ns"
+  
+  nlag_sa1<-21
+  xlag_sa1<-0:nlag_sa1
+  lagnk_sa1 <- 3
+  klag_sa1<-logknots(nlag_sa1,lagnk_sa1)
+  lagfun_sa1<-"ns"
+  
+  #
+  argvar_sa1<-list(fun=varfun_sa1, 
+                   Bound = range(data_region$temp_mean, na.rm = T),
+                   knots=knotsper_sa1, 
+                   int=F)
+  arglag_sa1<-list(fun=lagfun_sa1, 
+                   knots=klag_sa1,
+                   int=T)
+  
+  cb_sa1 <- crossbasis(tpred_region, 
+                       lag=nlag_sa1, 
+                       argvar=argvar_sa1, 
+                       arglag=arglag_sa1)
+  bvar_sa1 <- do.call("onebasis",
+                      c(list(x=tpred_region),
+                        attr(cb_sa1,
+                             "argvar")))
+  blag_sa1 <- do.call("onebasis",
+                      c(list(x=xlag_sa1),
+                        attr(cb_sa1,
+                             "arglag")))
   
   ## SA2 Crossbasis parametrization
-  knotsper_sa2<-equalknots(data_region$temp_mean, nk = 2)
-  cb_sa2 <- crossbasis(data_region$temp_mean, lag=nlag_sa2, argvar=argvar_sa2, arglag=arglag_sa2)
-  bvar_sa2 <- do.call("onebasis",c(list(x=tpred_region),attr(cb_sa2,"argvar")))
+  ## SA 2, 2 knots, equally distant, but fixed knots for the lag
+  knotsper_sa2<-equalknots(data_region_means$tmin:data_region_means$tmax, 
+                           nk = 2)
+  varfun_sa2<-"ns"
+  
+  nlag_sa2<-21
+  xlag_sa2<-0:nlag_sa2
+  lagnk_sa2 <- 4
+  klag_sa2<-c(1,2,7,14)
+  lagfun_sa2<-"ns"
+  
+  #
+  argvar_sa2<-list(fun=varfun_sa2, 
+                   Bound = range(data_region$temp_mean, na.rm = T), 
+                   knots=knotsper_sa2, 
+                   int=F)
+  arglag_sa2<-list(fun=lagfun_sa2, 
+                   knots=klag_sa2,
+                   int=T)
+  
+  cb_sa2 <- crossbasis(tpred_region, 
+                       lag=nlag_sa2, 
+                       argvar=argvar_sa2, 
+                       arglag=arglag_sa2)
+  bvar_sa2 <- do.call("onebasis",
+                      c(list(x=tpred_region),
+                        attr(cb_sa2,
+                             "argvar")))
+  blag_sa2 <- do.call("onebasis",
+                      c(list(x=xlag_sa2),
+                        attr(cb_sa2,
+                             "arglag")))
   
   # Filtering Coef Matrix and VCOV matrix to the states for the region
   # coef
@@ -150,11 +216,11 @@ for (i in 1:5) {
   ## Salving the metanalysis
   ### 
   vroom_write(res_region_sa1[[i]], 
-              file = paste0("Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_region_", regions_names[i],".csv.xz"))
+              file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_region_", regions_names[i],".csv.xz"))
   
   
   vroom_write(res_region_sa2[[i]], 
-              file = paste0("Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_region_", regions_names[i],".csv.xz"))
+              file = paste0("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_gnm_overall_region_", regions_names[i],".csv.xz"))
   
   gc()
 }
@@ -168,10 +234,10 @@ res_region_sa2<-res_region_sa2 %>%
 
 # Saving
 vroom_write(data.frame(MHT = metaMHT_region_sa1, region = regions_names), 
-            file = "Outputs/Tables/Sensitivity_analysis/SA1_metamht_regions.csv.xz")
+            file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA1_metamht_regions.csv.xz")
 
 vroom_write(res_region_sa1, 
-            file = "Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_all_regions.csv.xz")
+            file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_all_regions.csv.xz")
 
 vroom_write(data.frame(MHT = metaMHT_region_sa2, region = regions_names), 
             file = "Outputs/Tables/Sensitivity_analysis/SA2_metamht_regions.csv.xz")

@@ -3,23 +3,23 @@ gc()
 
 ### Loading packages
 source("Scripts/01_parametrizations.R")
-source("Scripts/Sensitivity_analysis/sa1&2_parametrization.R")
+# source("Scripts/Sensitivity_analysis/sa1&2_parametrization.R")
 
 ## Loading Coef and Vcov, in case to not re-run the model all again
 ## SA1
 ## Coef and Vcov for states
-coef_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_coefficients_gnm_q50_for_all.csv.xz")
-vcov_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_vcov_gnm_q50_for_all.csv.xz")
+coef_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_coefficients_gnm_q50_for_all.csv.xz")
+vcov_q50_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_vcov_gnm_q50_for_all.csv.xz")
 ## Coef and Vcov for states
-coef_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_coefficients_gnm_q95_for_all.csv.xz")
-vcov_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/SA1_vcov_gnm_q95_for_all.csv.xz")
+coef_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_coefficients_gnm_q95_for_all.csv.xz")
+vcov_q95_sa1<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA1_vcov_gnm_q95_for_all.csv.xz")
 ## SA2
 ## Coef and Vcov for states
-coef_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_coefficients_gnm_q50_for_all.csv.xz")
-vcov_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_vcov_gnm_q50_for_all.csv.xz")
+coef_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_coefficients_gnm_q50_for_all.csv.xz")
+vcov_q50_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_vcov_gnm_q50_for_all.csv.xz")
 ## Coef and Vcov for states
-coef_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_coefficients_gnm_q95_for_all.csv.xz")
-vcov_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/SA2_vcov_gnm_q95_for_all.csv.xz")
+coef_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_coefficients_gnm_q95_for_all.csv.xz")
+vcov_q95_sa2<-vroom("Outputs/Tables/Sensitivity_analysis/Newrun/SA2_vcov_gnm_q95_for_all.csv.xz")
 
 # Running DLNMs over the cities
 metaMHT<-10.7 ## Got from the 03a_meta_gnm_for_all.R script on the line, 
@@ -112,13 +112,13 @@ RR_list_sa1<-RR_list_sa1 %>%
   bind_rows()
 
 # Salving the Meta-analysis RR list
-vroom_write(RR_list_sa1, file = "Outputs/Tables/Sensitivity_analysis/SA1_meta_RR_gnm_lags_for_all.csv.xz")
+vroom_write(RR_list_sa1, file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_RR_gnm_lags_for_all.csv.xz")
 
 # Binding the rows for the RR list
 RR_list_sa2<-RR_list_sa2 %>% 
   bind_rows()
 
 # Salving the Meta-analysis RR list
-vroom_write(RR_list_sa2, file = "Outputs/Tables/Sensitivity_analysis/SA2_meta_RR_gnm_lags_for_all.csv.xz")
+vroom_write(RR_list_sa2, file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_RR_gnm_lags_for_all.csv.xz")
 
 #

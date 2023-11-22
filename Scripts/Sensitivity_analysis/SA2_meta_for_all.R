@@ -85,7 +85,7 @@ lagfun_sa1<-"ns"
 
 #
 argvar_sa1<-list(fun=varfun_sa1, 
-             Bound = range(dengue_t2m$temp_mean, na.rm = T), 
+             Bound = range(dengue_t2m$temp_mean, na.rm = T),
              knots=knotsper_sa1, 
              int=F)
 arglag_sa1<-list(fun=lagfun_sa1, 
@@ -102,11 +102,11 @@ cb_sa1 <- crossbasis(tpred,
 bvar_sa1 <- do.call("onebasis",
                     c(list(x=tpred),
                       attr(cb_sa1,
-                           "argvar_sa1")))
+                           "argvar")))
 blag_sa1 <- do.call("onebasis",
                     c(list(x=xlag_sa1),
                       attr(cb_sa1,
-                           "arglag_sa1")))
+                           "arglag")))
 
 ## SA1
 Metapred_sa1<-crosspred(basis=bvar_sa1,
@@ -146,11 +146,11 @@ cb_sa2 <- crossbasis(tpred,
 bvar_sa2 <- do.call("onebasis",
                     c(list(x=tpred),
                       attr(cb_sa2,
-                           "argvar_sa2")))
+                           "argvar")))
 blag_sa2 <- do.call("onebasis",
                     c(list(x=xlag_sa2),
                       attr(cb_sa2,
-                           "arglag_sa2")))
+                           "arglag")))
 
 ## SA2
 Metapred_sa2<-crosspred(basis=bvar_sa2,
@@ -196,12 +196,12 @@ res_sa2<-data.frame(temp_mean = Metapred_sa2$predvar,
 
 ## Salving the meta-analysis
 ##  SA1
-vroom_write(res_sa1, file = "Outputs/Tables/Sensitivity_analysis/SA1_meta_gnm_overall_for_all.csv.xz")
+vroom_write(res_sa1, file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA1_meta_gnm_overall_for_all.csv.xz")
 ## cen 
-vroom_write(res_sa2, file = "Outputs/Tables/Sensitivity_analysis/SA2_meta_gnm_overall_for_all.csv.xz")
+vroom_write(res_sa2, file = "Outputs/Tables/Sensitivity_analysis/Newrun/SA2_meta_gnm_overall_for_all.csv.xz")
 ## MHT
 MHT<-data.frame(MHT_sa1 = metaMHT_sa1, MHT_sa2 = metaMHT_sa2)
-vroom_write(MHT, file = "Outputs/Tables/Sensitivity_analysis/mht.csv.xz")
+vroom_write(MHT, file = "Outputs/Tables/Sensitivity_analysis/Newrun/mht.csv.xz")
 
 #
 
