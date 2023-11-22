@@ -47,14 +47,13 @@ plot_overall_region<-res_region %>%
        title="Temperature and Dengue Hospitalization",
        subtitle=paste0("Meta by Regions, 2010-2019"))+
   facet_wrap(region~., scales = "free")
-
 plot_overall_region
 
 ggsave(plot = plot_overall_region,
        filename = paste0("Outputs/Plots/New_run/plot_overall_regions_all_regions_gnm_meta.png"),
-       width = 9,
-       height = 7,
-       dpi = 300)
+       width = 11,
+       height = 9,
+       dpi = 200)
 
 ## Lags Plots by Region
 
@@ -116,8 +115,9 @@ plot_percent
 
 ggsave(filename = "Outputs/Plots/New_run/percentil_effects_regions.png", 
        plot = plot_percent, 
-       width = 9, 
-       height = 7, dpi = 300)
+       width = 11, 
+       height = 9, 
+       dpi = 200)
 
 # Plot grid
 plot_percent_grid<-RR_lag_region %>%
@@ -142,8 +142,9 @@ plot_percent_grid
 
 ggsave(filename = "Outputs/Plots/New_run/percentil_effects_regions_grid.png", 
        plot = plot_percent_grid, 
-       width = 9, 
-       height = 7, dpi = 300)
+       width = 11, 
+       height = 9, 
+       dpi = 200)
 
 
 ## patchwork plots
@@ -248,10 +249,9 @@ for (i in 1:5) {
   
   ggsave(filename = paste0("Outputs/Plots/New_run/figure_SM_", regions_names[i], "_region_meta_analysis.png"),
          plot = plot_figure_region[[i]],
-         width = 9,
-         height = 7, dpi = 300)
-  
-  
+         width = 11,
+         height = 9, 
+         dpi = 200)
 }
 
 

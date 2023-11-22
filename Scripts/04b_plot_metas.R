@@ -49,9 +49,9 @@ plot_overall
 
 ggsave(plot = plot_overall, 
        filename = "Outputs/Plots/New_run/plot_overall_gnm_meta.png", 
-       width = 9, 
-       height = 7, 
-       dpi = 300)
+       width = 11, 
+       height = 9, 
+       dpi = 200)
 
 # ## Plot RR meta
 # xlab<-pretty(RR_list$predvar)
@@ -133,8 +133,9 @@ plot_percent
 
 ggsave(filename = "Outputs/Plots/New_run/percentil_effects.png", 
        plot = plot_percent, 
-       width = 9, 
-       height = 7, dpi = 300)
+       width = 11, 
+       height = 9, 
+       dpi = 200)
 
 ## Figure 1 - paper
 library(patchwork)
@@ -148,8 +149,9 @@ plot_figure1
 
 ggsave(filename = "Outputs/Plots/New_run/figure_1_meta_analysis.png", 
        plot = plot_figure1, 
-       width = 9, 
-       height = 7, dpi = 300)
+       width = 11, 
+       height = 9, 
+       dpi = 200)
 
 # ## All lags together
 # plot_lags<-RR_list_lag |>
