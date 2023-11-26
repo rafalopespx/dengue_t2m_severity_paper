@@ -24,12 +24,24 @@ metaMHT_region<-res_region %>%
   select(temp_mean, region) %>% 
   mutate(region = factor(region, levels = c("North", "Northeast", "Center-West", "Southeast", "South")))
 
+ptmean_region<-res_region |> 
+  reframe(p50 = quantile(temp_mean, probs = 0.50),
+          p95 = quantile(temp_mean, probs = 0.95),
+          .by = region)
+
+## Patchwork to make the traced lines of the p50 and p95 on each region plots
+
 xlab<-pretty(res_region$temp_mean)
 ylab<-pretty(c(res_region$LowRR, res_region$HighRR))
 plot_overall_region<-res_region %>% 
   mutate(region = factor(region, levels = c("North", "Northeast", "Center-West", "Southeast", "South"))) %>% 
   ggplot(aes(temp_mean, RR)) + 
   geom_hline(yintercept = 1, size = 0.5) +
+  geom_vline(data = ptmean_region,
+             aes(xintercept = c(p50,
+                            p95)), 
+             inherit.aes = F,
+             size = 0.5,colour=c("#4575b4","#d73027"),linetype="dashed") +
   geom_ribbon(aes(ymin = LowRR,ymax = HighRR),fill="grey80",alpha=0.5) +
   geom_line(colour="#cb181d",size=1) +
   geom_point(data = metaMHT_region, aes(temp_mean,1),
