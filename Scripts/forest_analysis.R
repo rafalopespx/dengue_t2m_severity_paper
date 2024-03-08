@@ -128,9 +128,15 @@ p2
 
 
 
-grid.draw(gridExtra::gtable_cbind(ggplotGrob(p2), ggplotGrob(p1), 
+gg50th <- grid.arrange(gridExtra::gtable_cbind(ggplotGrob(p2), ggplotGrob(p1), 
                                   size = "max"))
+gg50th
 
+ggsave(filename = "Outputs/Plots/S3_forest_plot_at_50th.png",
+       plot = gg50th,
+       width = 9,
+       height = 11,
+       dpi = 100)
 
 ### 95th
 
@@ -228,5 +234,13 @@ p4
 
 
 
-grid.draw(gridExtra::gtable_cbind(ggplotGrob(p4), ggplotGrob(p3), 
-                                  size = "max"))
+gg95th <- grid.arrange(gridExtra::gtable_cbind(ggplotGrob(p4), 
+                                               ggplotGrob(p3), 
+                                               size = "max"))
+gg95th
+
+ggsave(filename = "Outputs/Plots/S4_forest_plot_at_95th.png",
+       plot = gg95th,
+       width = 9,
+       height = 11,
+       dpi = 100)
